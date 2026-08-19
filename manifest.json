@@ -8,5 +8,13 @@
   "theme_color": "#07110f",
   "orientation": "portrait",
   "lang": "ur",
-  "dir": "rtl"
+  "dir": "rtl",
+  "icons": [
+    {
+      "src": "launchericon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
 }
