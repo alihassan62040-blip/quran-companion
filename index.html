@@ -6,217 +6,107 @@
 
   <meta
     name="viewport"
-    content="width=device-width, initial-scale=1.0">
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+  >
 
-  <meta
-    name="theme-color"
-    content="#07110f">
+  <meta name="theme-color" content="#07110f">
 
   <meta
     name="description"
-    content="Quran Companion - قرآن، حدیث، نماز، اذکار اور اسلامی معلومات">
+    content="Quran Companion - قرآن، حدیث، تفسیر، نماز، دعائیں اور اسلامی معلومات"
+  >
 
   <title>Quran Companion</title>
 
-  <link
-    rel="manifest"
-    href="manifest.json">
+  <link rel="manifest" href="./manifest.json">
 
+  <link
+    rel="icon"
+    type="image/png"
+    href="./launchericon-512x512.png"
+  >
+
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
   <meta
-    name="mobile-web-app-capable"
-    content="yes">
+    name="apple-mobile-web-app-status-bar-style"
+    content="black-translucent"
+  >
 
-  <link
-    rel="stylesheet"
-    href="style.css">
-
+  <link rel="stylesheet" href="./style.css">
 </head>
-
 
 <body>
 
-<div class="app">
+<div id="app">
 
+  <!-- ========================================= -->
+  <!-- HOME SCREEN -->
+  <!-- ========================================= -->
 
-  <!-- =========================================
-       HOME
-  ========================================== -->
+  <section id="homeScreen" class="screen">
 
-  <section
-    id="homeScreen"
-    class="main-screen">
+    <!-- HEADER -->
 
+    <header class="hero">
 
-    <!-- TOP HEADER -->
+      <div class="moon">☾</div>
 
-    <header class="app-header">
+      <p class="bismillah">
+        بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ
+      </p>
 
-      <div class="brand">
+      <h1>
+        Quran Companion
+      </h1>
 
-        <div class="brand-icon">
-          ☾
-        </div>
-
-        <div>
-
-          <h1>
-            Quran Companion
-          </h1>
-
-          <p>
-            آپ کا اسلامی ساتھی
-          </p>
-
-        </div>
-
-      </div>
-
+      <p class="subtitle">
+        قرآن • حدیث • تفسیر • نماز • دعائیں
+      </p>
 
       <button
+        class="continue-btn"
         type="button"
-        class="header-btn"
-        onclick="openSettings()">
-
-        ⚙️
-
+        onclick="continueReading()"
+      >
+        ▶ جہاں چھوڑا تھا وہاں سے پڑھیں
       </button>
 
     </header>
 
 
-    <!-- GREETING -->
+    <!-- QUICK INFO -->
 
-    <section class="welcome-card">
+    <div class="quick-info">
 
-      <div>
-
-        <p class="small-text">
-          السلام علیکم
-        </p>
-
-        <h2>
-          آج قرآن سے جڑنے کا دن ہے
-        </h2>
-
-        <p>
-          اللہ کے کلام کے ساتھ اپنا دن شروع کریں۔
-        </p>
-
+      <div class="info-card">
+        <span>📖</span>
+        <strong>114</strong>
+        <small>سورتیں</small>
       </div>
 
-      <div class="welcome-icon">
-        📖
+      <div class="info-card">
+        <span>🕌</span>
+        <strong>5</strong>
+        <small>نمازیں</small>
       </div>
 
-    </section>
-
-
-    <!-- QUICK ACTIONS -->
-
-    <section class="quick-section">
-
-      <h2>
-        فوری رسائی
-      </h2>
-
-
-      <div class="quick-grid">
-
-
-        <button
-          type="button"
-          class="quick-card"
-          onclick="openQuran()">
-
-          <span>
-            📖
-          </span>
-
-          <strong>
-            قرآن
-          </strong>
-
-          <small>
-            تلاوت کریں
-          </small>
-
-        </button>
-
-
-        <button
-          type="button"
-          class="quick-card"
-          onclick="openPrayer()">
-
-          <span>
-            🕌
-          </span>
-
-          <strong>
-            نماز
-          </strong>
-
-          <small>
-            نماز کا وقت
-          </small>
-
-        </button>
-
-
-        <button
-          type="button"
-          class="quick-card"
-          onclick="openQibla()">
-
-          <span>
-            🧭
-          </span>
-
-          <strong>
-            قبلہ
-          </strong>
-
-          <small>
-            سمت معلوم کریں
-          </small>
-
-        </button>
-
-
-        <button
-          type="button"
-          class="quick-card"
-          onclick="openDuas()">
-
-          <span>
-            🤲
-          </span>
-
-          <strong>
-            دعائیں
-          </strong>
-
-          <small>
-            مسنون دعائیں
-          </small>
-
-        </button>
-
-
+      <div class="info-card">
+        <span>🤲</span>
+        <strong>100+</strong>
+        <small>دعائیں</small>
       </div>
 
-    </section>
+    </div>
 
 
-    <!-- TODAY -->
+    <!-- DAILY AYAH -->
 
-    <section class="today-card">
+    <section class="daily-card">
 
-      <div class="card-heading">
+      <div class="section-title">
 
-        <span>
-          ✨
-        </span>
+        <span>✨</span>
 
         <h2>
           آج کی آیت
@@ -224,96 +114,61 @@
 
       </div>
 
-
       <p class="ayah-arabic">
-
         فَإِنَّ مَعَ الْعُسْرِ يُسْرًا
-
       </p>
-
 
       <p class="ayah-reference">
-
         سورۃ الشرح — 94:5
-
       </p>
-
 
       <p class="ayah-translation">
-
         پس بے شک مشکل کے ساتھ آسانی ہے۔
-
       </p>
 
+      <div class="daily-actions">
 
-      <button
-        type="button"
-        class="primary-btn"
-        onclick="playDailyAyah()">
+        <button
+          class="read-btn"
+          type="button"
+          onclick="playDailyAyah()"
+        >
+          🔊 سنیں
+        </button>
 
-        🔊 آیت سنیں
-
-      </button>
-
-    </section>
-
-
-    <!-- CONTINUE READING -->
-
-    <section class="continue-card">
-
-      <div>
-
-        <span>
-          📚
-        </span>
-
-        <div>
-
-          <strong>
-            جہاں چھوڑا تھا
-          </strong>
-
-          <small id="lastReadingText">
-            آخری تلاوت جاری رکھیں
-          </small>
-
-        </div>
+        <button
+          class="read-btn"
+          type="button"
+          onclick="openQuran()"
+        >
+          📖 قرآن کھولیں
+        </button>
 
       </div>
 
-
-      <button
-        type="button"
-        onclick="continueReading()">
-
-        جاری رکھیں →
-
-      </button>
-
     </section>
 
 
-    <!-- ALL FEATURES -->
+    <!-- FEATURES -->
 
-    <section class="features-section">
+    <section class="features">
 
       <h2>
         اسلامی دنیا
       </h2>
 
-
       <div class="feature-grid">
 
 
-        <button
-          type="button"
-          class="feature-card"
-          onclick="openQuran()">
+        <!-- QURAN -->
 
-          <span>
-            📖
-          </span>
+        <button
+          class="feature-card"
+          type="button"
+          onclick="openQuran()"
+        >
+
+          <span>📖</span>
 
           <strong>
             قرآن مجید
@@ -326,14 +181,15 @@
         </button>
 
 
-        <button
-          type="button"
-          class="feature-card"
-          onclick="openHadith()">
+        <!-- HADITH -->
 
-          <span>
-            📚
-          </span>
+        <button
+          class="feature-card"
+          type="button"
+          onclick="openHadith()"
+        >
+
+          <span>📚</span>
 
           <strong>
             حدیث
@@ -346,54 +202,36 @@
         </button>
 
 
-        <button
-          type="button"
-          class="feature-card"
-          onclick="openPrayer()">
+        <!-- PRAYER -->
 
-          <span>
-            🕌
-          </span>
+        <button
+          class="feature-card"
+          type="button"
+          onclick="openPrayer()"
+        >
+
+          <span>🕌</span>
 
           <strong>
             نماز
           </strong>
 
           <small>
-            نماز کے اوقات
+            مکمل طریقہ
           </small>
 
         </button>
 
 
-        <button
-          type="button"
-          class="feature-card"
-          onclick="openQibla()">
-
-          <span>
-            🧭
-          </span>
-
-          <strong>
-            قبلہ
-          </strong>
-
-          <small>
-            Qibla Compass
-          </small>
-
-        </button>
-
+        <!-- DUAS -->
 
         <button
-          type="button"
           class="feature-card"
-          onclick="openDuas()">
+          type="button"
+          onclick="openDuas()"
+        >
 
-          <span>
-            🤲
-          </span>
+          <span>🤲</span>
 
           <strong>
             دعائیں
@@ -406,34 +244,57 @@
         </button>
 
 
-        <button
-          type="button"
-          class="feature-card"
-          onclick="openTasbeeh()">
+        <!-- TASBEEH -->
 
-          <span>
-            📿
-          </span>
+        <button
+          class="feature-card"
+          type="button"
+          onclick="openTasbeeh()"
+        >
+
+          <span>📿</span>
 
           <strong>
             تسبیح
           </strong>
 
           <small>
-            Digital Tasbeeh
+            ڈیجیٹل تسبیح
           </small>
 
         </button>
 
 
-        <button
-          type="button"
-          class="feature-card"
-          onclick="openCalendar()">
+        <!-- QIBLA -->
 
-          <span>
-            📅
-          </span>
+        <button
+          class="feature-card"
+          type="button"
+          onclick="openQibla()"
+        >
+
+          <span>🧭</span>
+
+          <strong>
+            قبلہ
+          </strong>
+
+          <small>
+            قبلہ سمت
+          </small>
+
+        </button>
+
+
+        <!-- CALENDAR -->
+
+        <button
+          class="feature-card"
+          type="button"
+          onclick="openCalendar()"
+        >
+
+          <span>📅</span>
 
           <strong>
             اسلامی کیلنڈر
@@ -446,34 +307,57 @@
         </button>
 
 
-        <button
-          type="button"
-          class="feature-card"
-          onclick="openHistory()">
+        <!-- KAABA -->
 
-          <span>
-            📜
-          </span>
+        <button
+          class="feature-card"
+          type="button"
+          onclick="openKaaba()"
+        >
+
+          <span>🕋</span>
+
+          <strong>
+            خانہ کعبہ
+          </strong>
+
+          <small>
+            بیت اللہ
+          </small>
+
+        </button>
+
+
+        <!-- HISTORY -->
+
+        <button
+          class="feature-card"
+          type="button"
+          onclick="openHistory()"
+        >
+
+          <span>📜</span>
 
           <strong>
             اسلامی تاریخ
           </strong>
 
           <small>
-            سیرت و تاریخ
+            سیرت النبی ﷺ
           </small>
 
         </button>
 
 
-        <button
-          type="button"
-          class="feature-card"
-          onclick="openUniverse()">
+        <!-- UNIVERSE -->
 
-          <span>
-            🌌
-          </span>
+        <button
+          class="feature-card"
+          type="button"
+          onclick="openUniverse()"
+        >
+
+          <span>🌌</span>
 
           <strong>
             کائنات
@@ -486,14 +370,15 @@
         </button>
 
 
-        <button
-          type="button"
-          class="feature-card"
-          onclick="openCreatures()">
+        <!-- CREATURES -->
 
-          <span>
-            🦋
-          </span>
+        <button
+          class="feature-card"
+          type="button"
+          onclick="openCreatures()"
+        >
+
+          <span>🦋</span>
 
           <strong>
             جاندار
@@ -506,14 +391,15 @@
         </button>
 
 
-        <button
-          type="button"
-          class="feature-card"
-          onclick="openAI()">
+        <!-- AI -->
 
-          <span>
-            🤖
-          </span>
+        <button
+          class="feature-card"
+          type="button"
+          onclick="openAI()"
+        >
+
+          <span>🤖</span>
 
           <strong>
             Islamic AI
@@ -525,69 +411,69 @@
 
         </button>
 
-
       </div>
 
     </section>
 
-
   </section>
 
 
-
-  <!-- =========================================
-       QURAN
-  ========================================== -->
+  <!-- ========================================= -->
+  <!-- QURAN SCREEN -->
+  <!-- ========================================= -->
 
   <section
     id="quranScreen"
-    class="app-screen hidden">
-
+    class="screen app-screen hidden"
+  >
 
     <div class="screen-header">
 
       <button
         type="button"
-        onclick="goHome()">
-
+        onclick="goHome()"
+      >
         ← واپس
-
       </button>
-
 
       <h2>
         📖 قرآن مجید
       </h2>
 
-
       <button
         type="button"
-        onclick="toggleSearch()">
-
+        onclick="toggleSearch()"
+      >
         🔎
-
       </button>
 
     </div>
 
 
+    <!-- SEARCH -->
+
     <div
       id="quranSearch"
-      class="search-box hidden">
+      class="search-box hidden"
+    >
 
       <input
         id="surahSearch"
         type="search"
-        placeholder="سورت تلاش کریں..."
-        oninput="filterSurahs()">
+        autocomplete="off"
+        placeholder="سورۃ تلاش کریں..."
+        oninput="filterSurahs()"
+      >
 
     </div>
 
 
+    <!-- QURAN INFO -->
+
     <div class="quran-info">
 
       <span>
-        114 سورتیں
+        📖 114 سورتیں
       </span>
 
       <span>
@@ -597,47 +483,43 @@
     </div>
 
 
+    <!-- SURAH LIST -->
+
     <div
       id="surahList"
-      class="surah-list">
-    </div>
-
+      class="surah-list"
+    ></div>
 
   </section>
 
 
-
-  <!-- =========================================
-       QURAN READER
-  ========================================== -->
+  <!-- ========================================= -->
+  <!-- QURAN READER -->
+  <!-- ========================================= -->
 
   <section
     id="readerScreen"
-    class="app-screen hidden">
-
+    class="screen app-screen hidden"
+  >
 
     <div class="screen-header">
 
       <button
         type="button"
-        onclick="backToSurahs()">
-
+        onclick="backToSurahs()"
+      >
         ← سورتیں
-
       </button>
-
 
       <h2 id="readerTitle">
         قرآن
       </h2>
 
-
       <button
         type="button"
-        onclick="toggleReaderMode()">
-
+        onclick="toggleReaderMode()"
+      >
         👆
-
       </button>
 
     </div>
@@ -645,598 +527,633 @@
 
     <div
       id="readerMode"
-      class="reader-mode hidden">
-
-      👆 Finger Reading Mode
-
+      class="reader-mode hidden"
+    >
+      👆 Reading Mode
     </div>
 
 
     <div
       id="readerLoading"
-      class="loading hidden">
-
+      class="loading hidden"
+    >
       قرآن لوڈ ہو رہا ہے...
-
     </div>
 
 
-    <div
+    <main
       id="ayahContainer"
-      class="ayah-container">
-    </div>
-
+      class="ayah-container"
+    ></main>
 
   </section>
 
 
-
-  <!-- =========================================
-       HADITH
-  ========================================== -->
+  <!-- ========================================= -->
+  <!-- HADITH SCREEN -->
+  <!-- ========================================= -->
 
   <section
     id="hadithScreen"
-    class="app-screen hidden">
-
+    class="screen app-screen hidden"
+  >
 
     <div class="screen-header">
 
       <button
         type="button"
-        onclick="goHome()">
-
+        onclick="goHome()"
+      >
         ← واپس
-
       </button>
-
 
       <h2>
         📚 حدیث
       </h2>
 
+      <span></span>
+
     </div>
 
 
     <div class="coming-card">
 
-      <span>
-        📚
-      </span>
+      <span>📚</span>
 
       <h2>
-        Hadith Library
+        حدیث لائبریری
       </h2>
 
       <p>
-        مستند حدیث collections یہاں شامل ہوں گی۔
+        صحیح احادیث، کتب حدیث اور موضوع کے مطابق تلاش۔
       </p>
 
     </div>
 
 
+    <div class="feature-grid">
+
+      <button
+        class="feature-card"
+        type="button"
+      >
+
+        <span>📗</span>
+
+        <strong>
+          صحیح بخاری
+        </strong>
+
+        <small>
+          احادیث
+        </small>
+
+      </button>
+
+
+      <button
+        class="feature-card"
+        type="button"
+      >
+
+        <span>📘</span>
+
+        <strong>
+          صحیح مسلم
+        </strong>
+
+        <small>
+          احادیث
+        </small>
+
+      </button>
+
+    </div>
+
   </section>
 
 
-
-  <!-- =========================================
-       PRAYER
-  ========================================== -->
+  <!-- ========================================= -->
+  <!-- PRAYER SCREEN -->
+  <!-- ========================================= -->
 
   <section
     id="prayerScreen"
-    class="app-screen hidden">
-
+    class="screen app-screen hidden"
+  >
 
     <div class="screen-header">
 
       <button
         type="button"
-        onclick="goHome()">
-
+        onclick="goHome()"
+      >
         ← واپس
-
       </button>
-
 
       <h2>
         🕌 نماز
       </h2>
 
-    </div>
-
-
-    <div class="prayer-times-card">
-
-      <p>
-        آج کے نماز کے اوقات
-      </p>
-
-      <h2>
-        نماز کے اوقات
-      </h2>
-
-      <div class="prayer-times">
-
-        <div>
-          <span>فجر</span>
-          <strong id="fajrTime">--:--</strong>
-        </div>
-
-        <div>
-          <span>ظہر</span>
-          <strong id="dhuhrTime">--:--</strong>
-        </div>
-
-        <div>
-          <span>عصر</span>
-          <strong id="asrTime">--:--</strong>
-        </div>
-
-        <div>
-          <span>مغرب</span>
-          <strong id="maghribTime">--:--</strong>
-        </div>
-
-        <div>
-          <span>عشاء</span>
-          <strong id="ishaTime">--:--</strong>
-        </div>
-
-      </div>
+      <span></span>
 
     </div>
 
 
     <div class="coming-card">
 
-      <span>
-        🤲
-      </span>
+      <span>🕌</span>
 
       <h2>
         نماز کا مکمل طریقہ
       </h2>
 
       <p>
-        وضو، نماز، رکعات، اذکار اور دعائیں۔
+        وضو، نماز، رکعات، اذکار اور دعائیں آسان انداز میں۔
       </p>
 
     </div>
 
 
-  </section>
-
-
-
-  <!-- =========================================
-       QIBLA
-  ========================================== -->
-
-  <section
-    id="qiblaScreen"
-    class="app-screen hidden">
-
-
-    <div class="screen-header">
+    <div class="feature-grid">
 
       <button
+        class="feature-card"
         type="button"
-        onclick="goHome()">
+      >
 
-        ← واپس
+        <span>💧</span>
+
+        <strong>
+          وضو
+        </strong>
+
+        <small>
+          وضو کے فرائض اور سنتیں
+        </small>
 
       </button>
 
 
-      <h2>
-        🧭 قبلہ
-      </h2>
+      <button
+        class="feature-card"
+        type="button"
+      >
 
-    </div>
+        <span>🕌</span>
 
+        <strong>
+          نماز کا طریقہ
+        </strong>
 
-    <div class="qibla-card">
+        <small>
+          تکبیر سے سلام تک
+        </small>
 
-      <div
-        id="qiblaCompass"
-        class="qibla-compass">
-
-        🕋
-
-      </div>
-
-
-      <h2>
-        قبلہ کی سمت
-      </h2>
-
-
-      <p id="qiblaStatus">
-
-        Location کی اجازت دے کر قبلہ سمت معلوم کریں۔
-
-      </p>
+      </button>
 
 
       <button
+        class="feature-card"
         type="button"
-        class="primary-btn"
-        onclick="startQibla()">
+      >
 
-        🧭 قبلہ معلوم کریں
+        <span>📿</span>
+
+        <strong>
+          اذکار
+        </strong>
+
+        <small>
+          نماز کے بعد کے اذکار
+        </small>
+
+      </button>
+
+
+      <button
+        class="feature-card"
+        type="button"
+      >
+
+        <span>🤲</span>
+
+        <strong>
+          نماز کی دعائیں
+        </strong>
+
+        <small>
+          مسنون دعائیں
+        </small>
 
       </button>
 
     </div>
 
-
   </section>
 
 
-
-  <!-- =========================================
-       DUAS
-  ========================================== -->
+  <!-- ========================================= -->
+  <!-- DUAS SCREEN -->
+  <!-- ========================================= -->
 
   <section
     id="duasScreen"
-    class="app-screen hidden">
-
+    class="screen app-screen hidden"
+  >
 
     <div class="screen-header">
 
       <button
         type="button"
-        onclick="goHome()">
-
+        onclick="goHome()"
+      >
         ← واپس
-
       </button>
-
 
       <h2>
         🤲 دعائیں
       </h2>
 
+      <span></span>
+
     </div>
 
 
-    <div class="dua-card">
+    <div class="coming-card">
 
-      <span>
-        🤲
-      </span>
+      <span>🤲</span>
 
       <h2>
-        ربِّ زِدْنِي عِلْمًا
+        مسنون دعائیں
       </h2>
 
       <p>
-        اے میرے رب! میرے علم میں اضافہ فرما۔
-      </p>
-
-      <small>
-        طٰہٰ — 20:114
-      </small>
-
-    </div>
-
-
-    <div class="dua-card">
-
-      <span>
-        🌙
-      </span>
-
-      <h2>
-        رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً
-      </h2>
-
-      <p>
-        اے ہمارے رب! ہمیں دنیا میں بھلائی عطا فرما۔
+        روزمرہ زندگی کی مسنون دعائیں اور اذکار۔
       </p>
 
     </div>
-
 
   </section>
 
 
-
-  <!-- =========================================
-       TASBEEH
-  ========================================== -->
+  <!-- ========================================= -->
+  <!-- TASBEEH SCREEN -->
+  <!-- ========================================= -->
 
   <section
     id="tasbeehScreen"
-    class="app-screen hidden">
-
+    class="screen app-screen hidden"
+  >
 
     <div class="screen-header">
 
       <button
         type="button"
-        onclick="goHome()">
-
+        onclick="goHome()"
+      >
         ← واپس
-
       </button>
-
 
       <h2>
         📿 تسبیح
       </h2>
+
+      <span></span>
 
     </div>
 
 
     <div class="tasbeeh-card">
 
-      <p>
-        سبحان اللہ
-      </p>
-
+      <h2>
+        سُبْحَانَ اللَّهِ
+      </h2>
 
       <div
         id="tasbeehCount"
-        class="tasbeeh-count">
-
+        class="tasbeeh-count"
+      >
         0
-
       </div>
 
-
       <button
-        type="button"
         class="tasbeeh-button"
-        onclick="incrementTasbeeh()">
-
-        📿
-
+        type="button"
+        onclick="increaseTasbeeh()"
+      >
+        📿 تسبیح
       </button>
 
-
       <button
+        class="read-btn"
         type="button"
-        class="secondary-btn"
-        onclick="resetTasbeeh()">
-
-        Reset
-
+        onclick="resetTasbeeh()"
+      >
+        دوبارہ شروع کریں
       </button>
 
     </div>
 
-
   </section>
 
 
-
-  <!-- =========================================
-       ISLAMIC CALENDAR
-  ========================================== -->
+  <!-- ========================================= -->
+  <!-- QIBLA SCREEN -->
+  <!-- ========================================= -->
 
   <section
-    id="calendarScreen"
-    class="app-screen hidden">
-
+    id="qiblaScreen"
+    class="screen app-screen hidden"
+  >
 
     <div class="screen-header">
 
       <button
         type="button"
-        onclick="goHome()">
-
+        onclick="goHome()"
+      >
         ← واپس
-
       </button>
 
-
       <h2>
-        📅 اسلامی کیلنڈر
+        🧭 قبلہ
       </h2>
 
-    </div>
-
-
-    <div class="calendar-card">
-
-      <span>
-        🌙
-      </span>
-
-      <h2 id="hijriDate">
-        اسلامی تاریخ
-      </h2>
-
-      <p id="gregorianDate">
-        آج کی تاریخ
-      </p>
-
-    </div>
-
-
-  </section>
-
-
-
-  <!-- =========================================
-       HISTORY
-  ========================================== -->
-
-  <section
-    id="historyScreen"
-    class="app-screen hidden">
-
-
-    <div class="screen-header">
-
-      <button
-        type="button"
-        onclick="goHome()">
-
-        ← واپس
-
-      </button>
-
-
-      <h2>
-        📜 اسلامی تاریخ
-      </h2>
+      <span></span>
 
     </div>
 
 
     <div class="coming-card">
 
-      <span>
-        📜
-      </span>
+      <span>🧭</span>
+
+      <h2>
+        قبلہ سمت
+      </h2>
+
+      <p>
+        آپ کے مقام سے قبلہ کی سمت معلوم کرنے کی سہولت یہاں شامل کی جائے گی۔
+      </p>
+
+    </div>
+
+  </section>
+
+
+  <!-- ========================================= -->
+  <!-- CALENDAR SCREEN -->
+  <!-- ========================================= -->
+
+  <section
+    id="calendarScreen"
+    class="screen app-screen hidden"
+  >
+
+    <div class="screen-header">
+
+      <button
+        type="button"
+        onclick="goHome()"
+      >
+        ← واپس
+      </button>
+
+      <h2>
+        📅 اسلامی کیلنڈر
+      </h2>
+
+      <span></span>
+
+    </div>
+
+
+    <div class="coming-card">
+
+      <span>🌙</span>
+
+      <h2>
+        ہجری کیلنڈر
+      </h2>
+
+      <p>
+        اسلامی تاریخ، رمضان، عید اور اہم اسلامی دن۔
+      </p>
+
+    </div>
+
+  </section>
+
+
+  <!-- ========================================= -->
+  <!-- KAABA SCREEN -->
+  <!-- ========================================= -->
+
+  <section
+    id="kaabaScreen"
+    class="screen app-screen hidden"
+  >
+
+    <div class="screen-header">
+
+      <button
+        type="button"
+        onclick="goHome()"
+      >
+        ← واپس
+      </button>
+
+      <h2>
+        🕋 خانہ کعبہ
+      </h2>
+
+      <span></span>
+
+    </div>
+
+
+    <div class="coming-card">
+
+      <span>🕋</span>
+
+      <h2>
+        بیت اللہ
+      </h2>
+
+      <p>
+        مکہ مکرمہ، خانہ کعبہ اور بیت اللہ کی تاریخ و معلومات۔
+      </p>
+
+    </div>
+
+  </section>
+
+
+  <!-- ========================================= -->
+  <!-- HISTORY SCREEN -->
+  <!-- ========================================= -->
+
+  <section
+    id="historyScreen"
+    class="screen app-screen hidden"
+  >
+
+    <div class="screen-header">
+
+      <button
+        type="button"
+        onclick="goHome()"
+      >
+        ← واپس
+      </button>
+
+      <h2>
+        📜 اسلامی تاریخ
+      </h2>
+
+      <span></span>
+
+    </div>
+
+
+    <div class="coming-card">
+
+      <span>📜</span>
 
       <h2>
         سیرت النبی ﷺ
       </h2>
 
       <p>
-        ان شاء اللہ یہاں سیرت اور اسلامی تاریخ کا مکمل سیکشن شامل ہوگا۔
+        رسول اللہ ﷺ کی سیرت اور اسلامی تاریخ کے اہم واقعات۔
       </p>
 
     </div>
 
-
   </section>
 
 
-
-  <!-- =========================================
-       UNIVERSE
-  ========================================== -->
+  <!-- ========================================= -->
+  <!-- UNIVERSE SCREEN -->
+  <!-- ========================================= -->
 
   <section
     id="universeScreen"
-    class="app-screen hidden">
-
+    class="screen app-screen hidden"
+  >
 
     <div class="screen-header">
 
       <button
         type="button"
-        onclick="goHome()">
-
+        onclick="goHome()"
+      >
         ← واپس
-
       </button>
-
 
       <h2>
         🌌 کائنات
       </h2>
+
+      <span></span>
 
     </div>
 
 
     <div class="coming-card">
 
-      <span>
-        🌌
-      </span>
+      <span>🌌</span>
 
       <h2>
         آسمان اور کائنات
       </h2>
 
       <p>
-        قرآن میں بیان کردہ کائنات اور جدید سائنسی معلومات۔
+        ستارے، سیارے، کہکشائیں اور کائنات سے متعلق معلومات۔
       </p>
 
     </div>
 
-
   </section>
 
 
-
-  <!-- =========================================
-       CREATURES
-  ========================================== -->
+  <!-- ========================================= -->
+  <!-- CREATURES SCREEN -->
+  <!-- ========================================= -->
 
   <section
     id="creaturesScreen"
-    class="app-screen hidden">
-
+    class="screen app-screen hidden"
+  >
 
     <div class="screen-header">
 
       <button
         type="button"
-        onclick="goHome()">
-
+        onclick="goHome()"
+      >
         ← واپس
-
       </button>
-
 
       <h2>
         🦋 جاندار
       </h2>
+
+      <span></span>
 
     </div>
 
 
     <div class="coming-card">
 
-      <span>
-        🦋
-      </span>
+      <span>🦋</span>
 
       <h2>
         اللہ کی مخلوق
       </h2>
 
       <p>
-        مختلف جانداروں کے بارے میں معلومات۔
+        مختلف جانوروں، پرندوں اور دیگر مخلوقات کے بارے میں معلومات۔
       </p>
 
     </div>
 
-
   </section>
 
 
-
-  <!-- =========================================
-       ISLAMIC AI
-  ========================================== -->
+  <!-- ========================================= -->
+  <!-- ISLAMIC AI SCREEN -->
+  <!-- ========================================= -->
 
   <section
     id="aiScreen"
-    class="app-screen hidden">
-
+    class="screen app-screen hidden"
+  >
 
     <div class="screen-header">
 
       <button
         type="button"
-        onclick="goHome()">
-
+        onclick="goHome()"
+      >
         ← واپس
-
       </button>
-
 
       <h2>
         🤖 Islamic AI
       </h2>
+
+      <span></span>
 
     </div>
 
 
     <div class="ai-card">
 
-      <span>
+      <div class="ai-icon">
         🤖
-      </span>
+      </div>
 
       <h2>
         Islamic AI Assistant
@@ -1246,206 +1163,76 @@
         قرآن، حدیث اور اسلامی معلومات کے بارے میں سوال پوچھیں۔
       </p>
 
+      <input
+        id="aiQuestion"
+        type="text"
+        placeholder="اپنا سوال لکھیں..."
+      >
 
-      <div class="ai-input-row">
-
-        <input
-          id="aiQuestion"
-          type="text"
-          placeholder="اپنا سوال لکھیں...">
-
-
-        <button
-          type="button"
-          onclick="askIslamicAI()">
-
-          ➤
-
-        </button>
-
-      </div>
-
+      <button
+        class="continue-btn"
+        type="button"
+        onclick="askAI()"
+      >
+        سوال پوچھیں
+      </button>
 
       <div
         id="aiAnswer"
-        class="ai-answer hidden">
-      </div>
+        class="ai-answer"
+      ></div>
 
     </div>
-
 
   </section>
-
-
-
-  <!-- =========================================
-       SETTINGS
-  ========================================== -->
-
-  <section
-    id="settingsScreen"
-    class="app-screen hidden">
-
-
-    <div class="screen-header">
-
-      <button
-        type="button"
-        onclick="goHome()">
-
-        ← واپس
-
-      </button>
-
-
-      <h2>
-        ⚙️ Settings
-      </h2>
-
-    </div>
-
-
-    <div class="settings-list">
-
-      <button
-        type="button"
-        onclick="toggleDarkMode()">
-
-        🌙
-        <span>
-          Dark Mode
-        </span>
-
-      </button>
-
-
-      <button
-        type="button"
-        onclick="increaseFont()">
-
-        A+
-        <span>
-          فونٹ بڑا کریں
-        </span>
-
-      </button>
-
-
-      <button
-        type="button"
-        onclick="decreaseFont()">
-
-        A-
-        <span>
-          فونٹ چھوٹا کریں
-        </span>
-
-      </button>
-
-
-    </div>
-
-
-  </section>
-
-
-
-  <!-- =========================================
-       BOTTOM NAVIGATION
-  ========================================== -->
-
-  <nav class="bottom-nav">
-
-
-    <button
-      type="button"
-      class="active"
-      onclick="goHome()">
-
-      <span>
-        🏠
-      </span>
-
-      <small>
-        Home
-      </small>
-
-    </button>
-
-
-    <button
-      type="button"
-      onclick="openQuran()">
-
-      <span>
-        📖
-      </span>
-
-      <small>
-        قرآن
-      </small>
-
-    </button>
-
-
-    <button
-      type="button"
-      onclick="openPrayer()">
-
-      <span>
-        🕌
-      </span>
-
-      <small>
-        نماز
-      </small>
-
-    </button>
-
-
-    <button
-      type="button"
-      onclick="openDuas()">
-
-      <span>
-        🤲
-      </span>
-
-      <small>
-        دعائیں
-      </small>
-
-    </button>
-
-
-    <button
-      type="button"
-      onclick="openAI()">
-
-      <span>
-        🤖
-      </span>
-
-      <small>
-        AI
-      </small>
-
-    </button>
-
-
-  </nav>
 
 
 </div>
 
 
+<!-- ========================================= -->
+<!-- MAIN SCRIPT -->
+<!-- ========================================= -->
 
-<!-- =========================================
-     JAVASCRIPT
-========================================== -->
+<script src="./script.js"></script>
 
-<script src="script.js"></script>
 
+<!-- ========================================= -->
+<!-- SERVICE WORKER -->
+<!-- ========================================= -->
+
+<script>
+
+if ("serviceWorker" in navigator) {
+
+  window.addEventListener(
+    "load",
+    function () {
+
+      navigator.serviceWorker
+        .register("./sw.js")
+        .then(function () {
+
+          console.log(
+            "Quran Companion offline system ready"
+          );
+
+        })
+        .catch(function (error) {
+
+          console.error(
+            "Service Worker Error:",
+            error
+          );
+
+        });
+
+    }
+  );
+
+}
+
+</script>
 
 </body>
 
