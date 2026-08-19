@@ -1088,3 +1088,175 @@ button:active {
   }
 
 }
+/* =====================================
+   QURAN READER FIX
+   ===================================== */
+
+.ayah-container {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 15px;
+    box-sizing: border-box;
+}
+
+.ayah-card {
+    background: #ffffff;
+    color: #111111;
+    border-radius: 18px;
+    margin: 15px 0;
+    padding: 18px;
+    border: 1px solid #d9e2df;
+    box-shadow: 0 5px 18px rgba(0,0,0,0.08);
+    box-sizing: border-box;
+}
+
+.ayah-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    direction: ltr;
+    margin-bottom: 15px;
+}
+
+.ayah-number {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #0b5d4b;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+.ayah-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.ayah-buttons button {
+    border: none;
+    background: #edf5f2;
+    border-radius: 10px;
+    padding: 9px 12px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.arabic-text {
+    direction: rtl;
+    text-align: right;
+    color: #111111;
+    font-size: 30px;
+    line-height: 2.2;
+    font-family: "Noto Naskh Arabic", "Amiri", serif;
+    margin: 12px 0 20px;
+}
+
+.translation-box {
+    background: #f3f8f6;
+    border-radius: 12px;
+    padding: 13px;
+    direction: rtl;
+    text-align: right;
+    margin-top: 10px;
+}
+
+.translation-title {
+    color: #0b5d4b;
+    font-weight: bold;
+    margin-bottom: 7px;
+}
+
+.translation-text {
+    color: #333333;
+    font-size: 17px;
+    line-height: 1.9;
+}
+
+.tafseer-btn {
+    width: 100%;
+    border: none;
+    background: #0b5d4b;
+    color: white;
+    padding: 11px;
+    margin-top: 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+.tafseer-box {
+    background: #fffbea;
+    color: #333;
+    margin-top: 10px;
+    padding: 12px;
+    border-radius: 10px;
+    line-height: 1.8;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.saved-ayah {
+    border: 2px solid #0b8f72;
+    box-shadow: 0 0 20px rgba(11,143,114,0.20);
+}
+
+.quran-loading,
+.quran-error {
+    background: #ffffff;
+    color: #222222;
+    border-radius: 18px;
+    padding: 30px 20px;
+    margin: 20px 0;
+    text-align: center;
+    box-shadow: 0 5px 18px rgba(0,0,0,0.08);
+}
+
+.quran-error .error-icon {
+    font-size: 40px;
+    margin-bottom: 10px;
+}
+
+.app-message {
+    position: fixed;
+    left: 15px;
+    right: 15px;
+    bottom: 20px;
+    z-index: 99999;
+    background: #07110f;
+    color: white;
+    padding: 14px 18px;
+    border-radius: 12px;
+    text-align: center;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: 0.3s;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+}
+
+.app-message.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+@media (max-width: 600px) {
+
+    .arabic-text {
+        font-size: 26px;
+        line-height: 2.1;
+    }
+
+    .translation-text {
+        font-size: 16px;
+    }
+
+    .ayah-card {
+        padding: 14px;
+    }
+
+}
