@@ -573,6 +573,17 @@
 <!-- MAIN JAVASCRIPT -->
 
 <script src="script.js"></script>
-
-</body>
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", function () {
+    navigator.serviceWorker.register("./sw.js")
+      .then(function () {
+        console.log("Quran Companion offline system ready");
+      })
+      .catch(function (error) {
+        console.error("Service Worker Error:", error);
+      });
+  });
+}
+</script></body>
 </html>
