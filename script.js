@@ -1,694 +1,1479 @@
 "use strict";
 
-/* =====================================================
-   QURAN COMPANION — COMPLETE APP
-===================================================== */
+/* ==============================
+   GLOBAL DATA
+============================== */
 
-const QURAN_FUNCTION_URL =
-  "https://ejysbslxndujbnbejkqb.supabase.co/functions/v1/quran-data";
+const API_QURAN =
+  "https://api.alquran.cloud/v1";
 
-const surahs = [
-[1,"الفاتحة","Al-Fatihah",7],[2,"البقرة","Al-Baqarah",286],
-[3,"آل عمران","Aal-Imran",200],[4,"النساء","An-Nisa",176],
-[5,"المائدة","Al-Maidah",120],[6,"الأنعام","Al-Anam",165],
-[7,"الأعراف","Al-Araf",206],[8,"الأنفال","Al-Anfal",75],
-[9,"التوبة","At-Tawbah",129],[10,"يونس","Yunus",109],
-[11,"هود","Hud",123],[12,"يوسف","Yusuf",111],
-[13,"الرعد","Ar-Rad",43],[14,"إبراهيم","Ibrahim",52],
-[15,"الحجر","Al-Hijr",99],[16,"النحل","An-Nahl",128],
-[17,"الإسراء","Al-Isra",111],[18,"الكهف","Al-Kahf",110],
-[19,"مريم","Maryam",98],[20,"طه","Ta-Ha",135],
-[21,"الأنبياء","Al-Anbiya",112],[22,"الحج","Al-Hajj",78],
-[23,"المؤمنون","Al-Muminun",118],[24,"النور","An-Nur",64],
-[25,"الفرقان","Al-Furqan",77],[26,"الشعراء","Ash-Shuara",227],
-[27,"النمل","An-Naml",93],[28,"القصص","Al-Qasas",88],
-[29,"العنكبوت","Al-Ankabut",69],[30,"الروم","Ar-Rum",60],
-[31,"لقمان","Luqman",34],[32,"السجدة","As-Sajdah",30],
-[33,"الأحزاب","Al-Ahzab",73],[34,"سبأ","Saba",54],
-[35,"فاطر","Fatir",45],[36,"يس","Ya-Sin",83],
-[37,"الصافات","As-Saffat",182],[38,"ص","Sad",88],
-[39,"الزمر","Az-Zumar",75],[40,"غافر","Ghafir",85],
-[41,"فصلت","Fussilat",54],[42,"الشورى","Ash-Shura",53],
-[43,"الزخرف","Az-Zukhruf",89],[44,"الدخان","Ad-Dukhan",59],
-[45,"الجاثية","Al-Jathiyah",37],[46,"الأحقاف","Al-Ahqaf",35],
-[47,"محمد","Muhammad",38],[48,"الفتح","Al-Fath",29],
-[49,"الحجرات","Al-Hujurat",18],[50,"ق","Qaf",45],
-[51,"الذاريات","Adh-Dhariyat",60],[52,"الطور","At-Tur",49],
-[53,"النجم","An-Najm",62],[54,"القمر","Al-Qamar",55],
-[55,"الرحمن","Ar-Rahman",78],[56,"الواقعة","Al-Waqiah",96],
-[57,"الحديد","Al-Hadid",29],[58,"المجادلة","Al-Mujadilah",22],
-[59,"الحشر","Al-Hashr",24],[60,"الممتحنة","Al-Mumtahanah",13],
-[61,"الصف","As-Saff",14],[62,"الجمعة","Al-Jumuah",11],
-[63,"المنافقون","Al-Munafiqun",11],[64,"التغابن","At-Taghabun",18],
-[65,"الطلاق","At-Talaq",12],[66,"التحريم","At-Tahrim",12],
-[67,"الملك","Al-Mulk",30],[68,"القلم","Al-Qalam",52],
-[69,"الحاقة","Al-Haqqah",52],[70,"المعارج","Al-Maarij",44],
-[71,"نوح","Nuh",28],[72,"الجن","Al-Jinn",28],
-[73,"المزمل","Al-Muzzammil",20],[74,"المدثر","Al-Muddaththir",56],
-[75,"القيامة","Al-Qiyamah",40],[76,"الإنسان","Al-Insan",31],
-[77,"المرسلات","Al-Mursalat",50],[78,"النبأ","An-Naba",40],
-[79,"النازعات","An-Naziat",46],[80,"عبس","Abasa",42],
-[81,"التكوير","At-Takwir",29],[82,"الانفطار","Al-Infitar",19],
-[83,"المطففين","Al-Mutaffifin",36],[84,"الانشقاق","Al-Inshiqaq",25],
-[85,"البروج","Al-Buruj",22],[86,"الطارق","At-Tariq",17],
-[87,"الأعلى","Al-Ala",19],[88,"الغاشية","Al-Ghashiyah",26],
-[89,"الفجر","Al-Fajr",30],[90,"البلد","Al-Balad",20],
-[91,"الشمس","Ash-Shams",15],[92,"الليل","Al-Layl",21],
-[93,"الضحى","Ad-Duha",11],[94,"الشرح","Ash-Sharh",8],
-[95,"التين","At-Tin",8],[96,"العلق","Al-Alaq",19],
-[97,"القدر","Al-Qadr",5],[98,"البينة","Al-Bayyinah",8],
-[99,"الزلزلة","Az-Zalzalah",8],[100,"العاديات","Al-Adiyat",11],
-[101,"القارعة","Al-Qariah",11],[102,"التكاثر","At-Takathur",8],
-[103,"العصر","Al-Asr",3],[104,"الهمزة","Al-Humazah",9],
-[105,"الفيل","Al-Fil",5],[106,"قريش","Quraysh",4],
-[107,"الماعون","Al-Maun",7],[108,"الكوثر","Al-Kawthar",3],
-[109,"الكافرون","Al-Kafirun",6],[110,"النصر","An-Nasr",3],
-[111,"المسد","Al-Masad",5],[112,"الإخلاص","Al-Ikhlas",4],
-[113,"الفلق","Al-Falaq",5],[114,"الناس","An-Nas",6]
-];
+const API_QURAN_COM =
+  "https://api.quran.com/api/v4";
 
+let surahs = [];
 let verses = [];
-let currentIndex = 0;
-let currentAudio = null;
-let currentSurah = 0;
-let isPlaying = false;
 
-/* =====================================================
-   NAVIGATION
-===================================================== */
+let currentSurah = null;
+let currentAyahIndex = 0;
+
+let audio = new Audio();
+audio.preload = "auto";
+
+let translationId =
+  localStorage.getItem("translationId") ||
+  "ur.jalandhry";
+
+let arabicFontSize =
+  Number(localStorage.getItem("arabicFontSize")) ||
+  32;
+
+let tasbeeh =
+  Number(localStorage.getItem("tasbeeh")) ||
+  0;
+
+
+/* ==============================
+   INITIALIZE
+============================== */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  updateTasbeeh();
+
+  const font =
+    document.getElementById("fontSize");
+
+  if (font) {
+    font.value = arabicFontSize;
+  }
+
+  const translation =
+    document.getElementById("translationSelect");
+
+  if (translation) {
+    translation.value = translationId;
+  }
+
+  audio.addEventListener("ended", () => {
+    nextAudio(true);
+  });
+
+  audio.addEventListener("timeupdate", updateAudioTime);
+
+  audio.addEventListener("loadedmetadata", () => {
+    updateAudioTime();
+  });
+
+  loadSurahs();
+
+});
+
+
+/* ==============================
+   SCREEN SYSTEM
+============================== */
 
 function hideAllScreens(){
-  document.querySelectorAll(
-    "#homeScreen,#quranScreen,#readerScreen,#prayerScreen,#duasScreen,#tasbeehScreen,#kaabaScreen"
-  ).forEach(function(x){
-    x.classList.add("hidden");
+
+  [
+    "home",
+    "quran",
+    "reader",
+    "duas",
+    "tasbeeh",
+    "prayer",
+    "qibla",
+    "kaaba",
+    "about"
+  ].forEach(id => {
+
+    const el =
+      document.getElementById(id);
+
+    if (el) {
+      el.classList.add("hidden");
+    }
+
   });
+
 }
 
-function show(id,title){
-  hideAllScreens();
-  const el=document.getElementById(id);
-  if(el) el.classList.remove("hidden");
-  const h=document.getElementById("headerTitle");
-  if(h) h.textContent=title;
-}
 
 function goHome(){
+
   stopAudio();
-  show("homeScreen","Quran Companion");
+
+  hideAllScreens();
+
+  document
+    .getElementById("home")
+    .classList.remove("hidden");
+
+  document
+    .getElementById("headerTitle")
+    .textContent =
+    "Quran Companion";
+
 }
+
 
 function openQuran(){
-  show("quranScreen","قرآن");
-  renderSurahs();
+
+  hideAllScreens();
+
+  document
+    .getElementById("quran")
+    .classList.remove("hidden");
+
+  document
+    .getElementById("headerTitle")
+    .textContent =
+    "قرآن";
+
 }
 
-function continueReading(){
-  const n=Number(localStorage.getItem("lastSurah")||0);
-  if(n>=1&&n<=114){
-    openQuran();
-    setTimeout(()=>openSurah(n),100);
-  }else openQuran();
-}
-
-function openPrayer(){
-  show("prayerScreen","نماز کے اوقات");
-  loadPrayerTimes();
-}
-
-function openDuas(){
-  show("duasScreen","دعائیں");
-  renderDuas();
-}
-
-function openTasbeeh(){
-  show("tasbeehScreen","تسبیح");
-  updateTasbeeh();
-}
-
-function openKaaba(){
-  show("kaabaScreen","خانہ کعبہ");
-}
-
-/* =====================================================
-   QURAN LIST
-===================================================== */
-
-function renderSurahs(list=surahs){
-  const box=document.getElementById("surahList");
-  if(!box)return;
-
-  box.innerHTML="";
-
-  list.forEach(function(s){
-    const b=document.createElement("button");
-    b.className="surah-card";
-    b.type="button";
-
-    b.innerHTML=`
-      <span class="surah-number">${s[0]}</span>
-      <span class="surah-name">
-        <strong>${s[1]}</strong>
-        <small>${s[2]} — ${s[3]} آیات</small>
-      </span>
-    `;
-
-    b.onclick=()=>openSurah(s[0]);
-    box.appendChild(b);
-  });
-}
-
-function filterSurahs(){
-  const input=document.getElementById("surahSearch");
-  if(!input)return;
-
-  const q=input.value.trim().toLowerCase();
-
-  renderSurahs(
-    surahs.filter(s=>
-      String(s[0]).includes(q) ||
-      s[1].includes(q) ||
-      s[2].toLowerCase().includes(q)
-    )
-  );
-}
-
-/* =====================================================
-   OPEN SURAH
-===================================================== */
-
-async function openSurah(number){
-  stopAudio();
-
-  currentSurah=number;
-  currentIndex=0;
-  verses=[];
-
-  show("readerScreen","قرآن");
-
-  const s=surahs.find(x=>x[0]===number);
-
-  const title=document.getElementById("readerTitle");
-  if(title&&s) title.textContent="📖 "+s[1];
-
-  localStorage.setItem("lastSurah",String(number));
-
-  const box=document.getElementById("ayahContainer");
-  if(!box)return;
-
-  box.innerHTML='<div class="loading">قرآن، ترجمہ اور تفسیر لوڈ ہو رہی ہے...</div>';
-
-  try{
-    const response=await fetch(QURAN_FUNCTION_URL,{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({surah:number})
-    });
-
-    const result=await response.json();
-
-    if(!response.ok||!result.success){
-      throw new Error(result.error||"Quran data error");
-    }
-
-    verses=Array.isArray(result.verses)?result.verses:[];
-
-    if(!verses.length){
-      throw new Error("آیات نہیں ملیں");
-    }
-
-    renderAyahs();
-
-  }catch(error){
-    console.error(error);
-
-    box.innerHTML=`
-      <div class="card">
-        <h3>⚠️ قرآن لوڈ نہیں ہو سکا</h3>
-        <p>${escapeHTML(error.message)}</p>
-        <button class="primary" onclick="openSurah(${number})">
-          دوبارہ کوشش کریں
-        </button>
-      </div>
-    `;
-  }
-}
-
-/* =====================================================
-   AYAT
-===================================================== */
-
-function renderAyahs(){
-  const box=document.getElementById("ayahContainer");
-  if(!box)return;
-
-  box.innerHTML="";
-
-  verses.forEach(function(a,i){
-    const card=document.createElement("article");
-    card.className="ayah-card";
-    card.id="ayah-"+i;
-
-    const tafseer=a.tafseer||a.tafseerText||a.tafsir||"";
-
-    card.innerHTML=`
-      <div class="ayah-top">
-        <span class="ayah-number">${a.number||i+1}</span>
-
-        <div class="actions">
-          <button onclick="playIndex(${i})">🔊</button>
-        </div>
-      </div>
-
-      <div class="arabic">${escapeHTML(a.arabic||"")}</div>
-
-      <div class="translation">
-        <div class="translation-title">اردو ترجمہ</div>
-        <div>${escapeHTML(a.urdu||"ترجمہ دستیاب نہیں")}</div>
-      </div>
-
-      <button class="tafseer-btn" onclick="toggleTafseer(${i})">
-        📚 تفسیر دکھائیں
-      </button>
-
-      <div id="tafseer-${i}" class="tafseer hidden">
-        ${tafseer?escapeHTML(tafseer):"اس آیت کی تفسیر دستیاب نہیں۔"}
-      </div>
-    `;
-
-    box.appendChild(card);
-  });
-}
-
-function toggleTafseer(i){
-  const el=document.getElementById("tafseer-"+i);
-  if(!el)return;
-
-  el.classList.toggle("hidden");
-
-  const buttons=document.querySelectorAll(".tafseer-btn");
-
-  if(buttons[i]){
-    buttons[i].textContent=el.classList.contains("hidden")
-      ?"📚 تفسیر دکھائیں"
-      :"📕 تفسیر چھپائیں";
-  }
-}
-
-/* =====================================================
-   AUDIO
-===================================================== */
-
-function playIndex(i){
-  if(!verses[i])return;
-
-  currentIndex=i;
-  playCurrent();
-}
-
-function playCurrent(){
-  const a=verses[currentIndex];
-
-  if(!a)return;
-
-  if(!a.audio){
-    message("اس آیت کی آڈیو دستیاب نہیں۔");
-    return;
-  }
-
-  stopAudio(false);
-
-  currentAudio=new Audio(a.audio);
-  currentAudio.preload="auto";
-
-  currentAudio.onloadedmetadata=updateTime;
-  currentAudio.ontimeupdate=updateProgress;
-
-  currentAudio.onended=function(){
-    if(currentIndex<verses.length-1){
-      currentIndex++;
-      scrollAyah();
-      playCurrent();
-    }else{
-      isPlaying=false;
-      updatePlay();
-      message("سورت مکمل ہو گئی۔");
-    }
-  };
-
-  currentAudio.onerror=function(){
-    isPlaying=false;
-    updatePlay();
-    message("آڈیو چلانے میں مسئلہ آیا۔");
-  };
-
-  const player=document.getElementById("audioPlayer");
-  if(player)player.classList.remove("hidden");
-
-  updateTitle();
-  highlight();
-  scrollAyah();
-
-  currentAudio.play().then(function(){
-    isPlaying=true;
-    updatePlay();
-  }).catch(function(){
-    isPlaying=false;
-    updatePlay();
-    message("آڈیو چلانے کے لیے ▶️ دبائیں۔");
-  });
-}
-
-function toggleMainAudio(){
-  if(!currentAudio){
-    playCurrent();
-    return;
-  }
-
-  if(currentAudio.paused){
-    currentAudio.play().then(()=>{
-      isPlaying=true;
-      updatePlay();
-    }).catch(()=>message("آڈیو نہیں چل سکی۔"));
-  }else{
-    currentAudio.pause();
-    isPlaying=false;
-    updatePlay();
-  }
-}
-
-function nextAudio(){
-  if(currentIndex<verses.length-1){
-    currentIndex++;
-    playCurrent();
-  }
-}
-
-function previousAudio(){
-  if(currentIndex>0){
-    currentIndex--;
-    playCurrent();
-  }
-}
-
-function stopAudio(hide=true){
-  if(currentAudio){
-    currentAudio.pause();
-    currentAudio.src="";
-    currentAudio=null;
-  }
-
-  isPlaying=false;
-  updatePlay();
-
-  if(hide){
-    const p=document.getElementById("audioPlayer");
-    if(p)p.classList.add("hidden");
-  }
-}
-
-function updatePlay(){
-  const b=document.getElementById("mainPlay");
-  if(b)b.textContent=isPlaying?"⏸️":"▶️";
-}
-
-function updateTitle(){
-  const t=document.getElementById("audioTitle");
-  if(t)t.textContent="آیت "+(verses[currentIndex]?.number||currentIndex+1);
-}
-
-function highlight(){
-  document.querySelectorAll(".ayah-card").forEach(x=>x.classList.remove("current"));
-
-  const el=document.getElementById("ayah-"+currentIndex);
-  if(el)el.classList.add("current");
-}
-
-function scrollAyah(){
-  setTimeout(()=>{
-    const el=document.getElementById("ayah-"+currentIndex);
-    if(el)el.scrollIntoView({behavior:"smooth",block:"center"});
-  },100);
-}
-
-function updateProgress(){
-  if(!currentAudio)return;
-
-  const p=document.getElementById("audioProgress");
-  const c=document.getElementById("currentTime");
-
-  if(p&&currentAudio.duration){
-    p.value=(currentAudio.currentTime/currentAudio.duration)*100;
-  }
-
-  if(c)c.textContent=formatTime(currentAudio.currentTime);
-
-  updateTime();
-}
-
-function updateTime(){
-  const t=document.getElementById("totalTime");
-
-  if(t&&currentAudio&&isFinite(currentAudio.duration)){
-    t.textContent=formatTime(currentAudio.duration);
-  }
-}
-
-function seekAudio(value){
-  if(currentAudio&&isFinite(currentAudio.duration)){
-    currentAudio.currentTime=(Number(value)/100)*currentAudio.duration;
-  }
-}
-
-function formatTime(s){
-  if(!isFinite(s))return"0:00";
-
-  const m=Math.floor(s/60);
-  const sec=Math.floor(s%60).toString().padStart(2,"0");
-
-  return m+":"+sec;
-}
 
 function backToSurahs(){
+
   stopAudio();
-  openQuran();
+
+  hideAllScreens();
+
+  document
+    .getElementById("quran")
+    .classList.remove("hidden");
+
+  document
+    .getElementById("headerTitle")
+    .textContent =
+    "قرآن";
+
 }
 
-/* =====================================================
-   PRAYER TIMES
-===================================================== */
 
-async function loadPrayerTimes(){
-  const list=document.getElementById("prayerList");
-  const location=document.getElementById("prayerLocation");
+function openDuas(){
 
-  if(!list)return;
+  hideAllScreens();
 
-  list.innerHTML='<div class="loading">اوقات حاصل ہو رہے ہیں...</div>';
+  document
+    .getElementById("duas")
+    .classList.remove("hidden");
 
-  /*
-    Pehle browser location.
-    Agar permission na mile to Pakistan fallback.
-  */
+  document
+    .getElementById("headerTitle")
+    .textContent =
+    "دعائیں";
 
-  let lat=30.3753;
-  let lon=69.3451;
+  renderDuas();
 
-  try{
-    const position=await new Promise(function(resolve,reject){
-      if(!navigator.geolocation){
-        reject(new Error("Geolocation unavailable"));
-        return;
-      }
-
-      navigator.geolocation.getCurrentPosition(
-        resolve,
-        reject,
-        {enableHighAccuracy:false,timeout:7000}
-      );
-    });
-
-    lat=position.coords.latitude;
-    lon=position.coords.longitude;
-
-    if(location){
-      location.textContent="آپ کے موجودہ مقام کے مطابق اوقات";
-    }
-
-  }catch(error){
-    if(location){
-      location.textContent="پاکستان کے عمومی مقام کے مطابق اوقات";
-    }
-  }
-
-  try{
-    const date=new Date();
-
-    const url=
-      "https://api.aladhan.com/v1/timings/" +
-      date.getDate()+"-"+(date.getMonth()+1)+"-"+date.getFullYear()+
-      "?latitude="+lat+"&longitude="+lon+"&method=1";
-
-    const response=await fetch(url);
-    const result=await response.json();
-
-    if(!response.ok||result.code!==200){
-      throw new Error("Prayer API error");
-    }
-
-    const t=result.data.timings;
-
-    const prayers=[
-      ["فجر",t.Fajr],
-      ["طلوع آفتاب",t.Sunrise],
-      ["ظہر",t.Dhuhr],
-      ["عصر",t.Asr],
-      ["مغرب",t.Maghrib],
-      ["عشاء",t.Isha]
-    ];
-
-    list.innerHTML="";
-
-    prayers.forEach(function(p){
-      const card=document.createElement("div");
-      card.className="prayer-card";
-
-      card.innerHTML=`
-        <strong>${p[0]}</strong>
-        <span>${p[1]}</span>
-      `;
-
-      list.appendChild(card);
-    });
-
-  }catch(error){
-    console.error(error);
-
-    list.innerHTML=`
-      <div class="card">
-        ⚠️ نماز کے اوقات ابھی حاصل نہیں ہو سکے۔
-        <br><br>
-        دوبارہ کوشش کریں۔
-      </div>
-    `;
-  }
 }
 
-/* =====================================================
-   DUAS
-===================================================== */
 
-function renderDuas(){
-  const box=document.getElementById("duasList");
-  if(!box)return;
+function openTasbeeh(){
 
-  const duas=[
-    ["کھانے سے پہلے","بِسْمِ اللّٰهِ"],
-    ["کھانے کے بعد","الْحَمْدُ لِلّٰهِ الَّذِي أَطْعَمَنِي هَذَا وَرَزَقَنِيهِ"],
-    ["سونے کی دعا","بِاسْمِكَ اللَّهُمَّ أَمُوتُ وَأَحْيَا"],
-    ["گھر سے نکلنے کی دعا","بِسْمِ اللّٰهِ تَوَكَّلْتُ عَلَى اللّٰهِ، لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللّٰهِ"],
-    ["مسجد میں داخل ہونے کی دعا","اللَّهُمَّ افْتَحْ لِي أَبْوَابَ رَحْمَتِكَ"],
-    ["مسجد سے نکلنے کی دعا","اللَّهُمَّ إِنِّي أَسْأَلُكَ مِنْ فَضْلِكَ"]
-  ];
+  hideAllScreens();
 
-  box.innerHTML="";
+  document
+    .getElementById("tasbeeh")
+    .classList.remove("hidden");
 
-  duas.forEach(function(d){
-    const card=document.createElement("div");
-    card.className="dua-card";
+  document
+    .getElementById("headerTitle")
+    .textContent =
+    "تسبیح";
 
-    card.innerHTML=`
-      <strong>${d[0]}</strong>
-      <div class="dua-arabic">${d[1]}</div>
-    `;
-
-    box.appendChild(card);
-  });
 }
 
-/* =====================================================
-   TASBEEH
-===================================================== */
 
-function updateTasbeeh(){
-  const n=Number(localStorage.getItem("tasbeehCount")||0);
-  const el=document.getElementById("tasbeehCount");
-  if(el)el.textContent=n;
+function openPrayer(){
+
+  hideAllScreens();
+
+  document
+    .getElementById("prayer")
+    .classList.remove("hidden");
+
+  document
+    .getElementById("headerTitle")
+    .textContent =
+    "نماز کے اوقات";
+
 }
 
-function countTasbeeh(){
-  let n=Number(localStorage.getItem("tasbeehCount")||0);
-  n++;
-  localStorage.setItem("tasbeehCount",String(n));
-  updateTasbeeh();
+
+function openQibla(){
+
+  hideAllScreens();
+
+  document
+    .getElementById("qibla")
+    .classList.remove("hidden");
+
+  document
+    .getElementById("headerTitle")
+    .textContent =
+    "قبلہ";
+
 }
 
-function resetTasbeeh(){
-  localStorage.setItem("tasbeehCount","0");
-  updateTasbeeh();
+
+function openKaaba(){
+
+  hideAllScreens();
+
+  document
+    .getElementById("kaaba")
+    .classList.remove("hidden");
+
+  document
+    .getElementById("headerTitle")
+    .textContent =
+    "خانہ کعبہ";
+
 }
 
-/* =====================================================
-   SETTINGS
-===================================================== */
+
+function openAbout(){
+
+  hideAllScreens();
+
+  document
+    .getElementById("about")
+    .classList.remove("hidden");
+
+  document
+    .getElementById("headerTitle")
+    .textContent =
+    "اسلامی معلومات";
+
+}
+
 
 function toggleSettings(){
-  const s=document.getElementById("readerSettings");
-  if(s)s.classList.toggle("hidden");
-}
 
-function changeArabicSize(value){
-  document.querySelectorAll(".arabic").forEach(function(el){
-    el.style.fontSize=Number(value)+"px";
-  });
+  const settings =
+    document.getElementById("settings");
 
-  localStorage.setItem("arabicFontSize",String(value));
-}
-
-/* =====================================================
-   MESSAGE + SAFE TEXT
-===================================================== */
-
-let messageTimer=null;
-
-function message(text){
-  const el=document.getElementById("appMessage");
-  if(!el)return;
-
-  el.textContent=text;
-  el.classList.remove("hidden");
-
-  clearTimeout(messageTimer);
-
-  messageTimer=setTimeout(function(){
-    el.classList.add("hidden");
-  },3000);
-}
-
-function escapeHTML(value){
-  if(value===null||value===undefined)return"";
-
-  return String(value)
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
-}
-
-/* =====================================================
-   START
-===================================================== */
-
-document.addEventListener("DOMContentLoaded",function(){
-
-  const saved=localStorage.getItem("arabicFontSize");
-
-  const input=document.getElementById("fontSize");
-
-  if(saved&&input){
-    input.value=saved;
+  if (settings) {
+    settings.classList.toggle("hidden");
   }
 
-  console.log("Quran Companion complete app loaded");
-});
+}
+
+
+/* ==============================
+   QURAN SURAH LIST
+============================== */
+
+async function loadSurahs(){
+
+  const list =
+    document.getElementById("surahList");
+
+  try {
+
+    const response =
+      await fetch(
+        `${API_QURAN}/surah`
+      );
+
+    if (!response.ok) {
+      throw new Error("Surah API error");
+    }
+
+    const result =
+      await response.json();
+
+    surahs =
+      result.data || [];
+
+    renderSurahs(surahs);
+
+  } catch (error) {
+
+    console.error(error);
+
+    list.innerHTML = `
+      <div class="card">
+        سورتیں لوڈ نہیں ہو سکیں۔
+        <br><br>
+        Internet چیک کریں اور دوبارہ کوشش کریں۔
+      </div>
+    `;
+
+  }
+
+}
+
+
+function renderSurahs(data){
+
+  const list =
+    document.getElementById("surahList");
+
+  if (!data.length) {
+
+    list.innerHTML =
+      `<div class="loading">کوئی سورت نہیں ملی</div>`;
+
+    return;
+  }
+
+  list.innerHTML =
+    data.map(surah => `
+
+      <button
+        class="surah"
+        onclick="openSurah(${surah.number})">
+
+        <div class="surah-number">
+          ${surah.number}
+        </div>
+
+        <div class="surah-name">
+
+          <strong>
+            ${escapeHTML(surah.name)}
+          </strong>
+
+          <small>
+            ${escapeHTML(surah.englishName)}
+            — ${surah.numberOfAyahs} آیات
+          </small>
+
+        </div>
+
+      </button>
+
+    `).join("");
+
+}
+
+
+function filterSurahs(){
+
+  const value =
+    document
+      .getElementById("surahSearch")
+      .value
+      .toLowerCase()
+      .trim();
+
+  const filtered =
+    surahs.filter(s =>
+
+      String(s.number).includes(value) ||
+
+      String(s.name)
+        .toLowerCase()
+        .includes(value) ||
+
+      String(s.englishName)
+        .toLowerCase()
+        .includes(value)
+
+    );
+
+  renderSurahs(filtered);
+
+}
+
+
+/* ==============================
+   OPEN SURAH
+============================== */
+
+async function openSurah(number){
+
+  hideAllScreens();
+
+  document
+    .getElementById("reader")
+    .classList.remove("hidden");
+
+  document
+    .getElementById("headerTitle")
+    .textContent =
+    "قرآن";
+
+  const container =
+    document.getElementById("ayahContainer");
+
+  container.innerHTML =
+    `<div class="loading">
+      قرآن لوڈ ہو رہا ہے...
+    </div>`;
+
+  try {
+
+    const url =
+      `${API_QURAN}/surah/${number}/editions/` +
+      `quran-uthmani,${translationId}`;
+
+    const response =
+      await fetch(url);
+
+    if (!response.ok) {
+      throw new Error("Quran API error");
+    }
+
+    const result =
+      await response.json();
+
+    const arabic =
+      result.data.find(
+        x =>
+          x.edition &&
+          x.edition.identifier ===
+          "quran-uthmani"
+      );
+
+    const translation =
+      result.data.find(
+        x =>
+          x.edition &&
+          x.edition.identifier ===
+          translationId
+      );
+
+    if (!arabic) {
+      throw new Error(
+        "Arabic Quran data missing"
+      );
+    }
+
+    currentSurah = number;
+
+    verses =
+      arabic.ayahs.map((ayah,index) => {
+
+        return {
+
+          number:
+            ayah.numberInSurah,
+
+          globalNumber:
+            ayah.number,
+
+          arabic:
+            ayah.text,
+
+          translation:
+            translation &&
+            translation.ayahs[index]
+              ? translation.ayahs[index].text
+              : "",
+
+          audio:
+            `https://cdn.islamic.network/` +
+            `quran/audio/128/ar.alafasy/` +
+            `${ayah.number}.mp3`,
+
+          tafseer:null
+
+        };
+
+      });
+
+    localStorage.setItem(
+      "lastSurah",
+      String(number)
+    );
+
+    const info =
+      surahs.find(
+        s => s.number === number
+      );
+
+    document
+      .getElementById("readerTitle")
+      .textContent =
+      `📖 ${info ? info.name : "قرآن"}`;
+
+    renderVerses();
+
+    loadTafseer();
+
+  } catch(error){
+
+    console.error(error);
+
+    container.innerHTML =
+      `<div class="card">
+        قرآن لوڈ نہیں ہو سکا۔
+        <br><br>
+        Internet connection چیک کریں۔
+      </div>`;
+
+  }
+
+}
+
+
+/* ==============================
+   RENDER AYAT
+============================== */
+
+function renderVerses(){
+
+  const container =
+    document.getElementById(
+      "ayahContainer"
+    );
+
+  container.innerHTML =
+    verses.map((v,index) => `
+
+      <article
+        class="ayah"
+        id="ayah-${index}">
+
+        <div class="ayah-top">
+
+          <div class="ayah-number">
+            ${v.number}
+          </div>
+
+          <button
+            class="btn"
+            onclick="playAyah(${index})">
+            🔊 سنیں
+          </button>
+
+        </div>
+
+        <div
+          class="arabic"
+          style="font-size:${arabicFontSize}px">
+
+          ${escapeHTML(v.arabic)}
+
+        </div>
+
+        <div class="translation">
+
+          <div class="translation-title">
+            اردو ترجمہ
+          </div>
+
+          ${escapeHTML(v.translation)}
+
+        </div>
+
+        <button
+          class="tafseer-btn"
+          onclick="toggleTafseer(${index})">
+
+          📚 تفسیر دکھائیں
+
+        </button>
+
+        <div
+          id="tafseer-${index}"
+          class="tafseer hidden">
+
+          تفسیر لوڈ ہو رہی ہے...
+
+        </div>
+
+      </article>
+
+    `).join("");
+
+}
+
+
+/* ==============================
+   TAFSEER
+============================== */
+
+async function loadTafseer(){
+
+  for(let i=0;i<verses.length;i++){
+
+    try{
+
+      const globalNumber =
+        verses[i].globalNumber;
+
+      const resourceResponse =
+        await fetch(
+          `${API_QURAN_COM}/resources/tafsirs`
+        );
+
+      if(!resourceResponse.ok){
+        continue;
+      }
+
+      const resourceResult =
+        await resourceResponse.json();
+
+      const list =
+        resourceResult.tafsirs || [];
+
+      let resource =
+        list.find(t => {
+
+          const language =
+            String(
+              t.language_name ||
+              t.language ||
+              ""
+            ).toLowerCase();
+
+          return language.includes("urdu");
+
+        });
+
+      if(!resource){
+
+        resource =
+          list.find(t =>
+            String(t.name || "")
+              .toLowerCase()
+              .includes("ibn kathir")
+          );
+
+      }
+
+      if(!resource){
+        continue;
+      }
+
+      const response =
+        await fetch(
+          `${API_QURAN_COM}/tafsirs/` +
+          `${resource.id}/by_ayah/` +
+          `${globalNumber}`
+        );
+
+      if(!response.ok){
+        continue;
+      }
+
+      const result =
+        await response.json();
+
+      const t =
+        result.tafsir ||
+        result.data ||
+        null;
+
+      let text = "";
+
+      if(typeof t === "string"){
+        text = t;
+      }else if(t && typeof t.text === "string"){
+        text = t.text;
+      }
+
+      verses[i].tafseer =
+        text || "تفسیر دستیاب نہیں۔";
+
+    }catch(error){
+
+      console.error(
+        "Tafseer error:",
+        error
+      );
+
+    }
+
+  }
+
+}
+
+
+/* ==============================
+   SHOW TAFSEER
+============================== */
+
+async function toggleTafseer(index){
+
+  const box =
+    document.getElementById(
+      `tafseer-${index}`
+    );
+
+  if(!box) return;
+
+  if(!box.classList.contains("hidden")){
+    box.classList.add("hidden");
+    return;
+  }
+
+  box.classList.remove("hidden");
+
+  if(verses[index].tafseer){
+
+    box.innerHTML =
+      escapeHTML(
+        verses[index].tafseer
+      );
+
+    return;
+
+  }
+
+  box.textContent =
+    "تفسیر لوڈ ہو رہی ہے...";
+
+  try{
+
+    const resources =
+      await fetch(
+        `${API_QURAN_COM}/resources/tafsirs`
+      );
+
+    const result =
+      await resources.json();
+
+    const list =
+      result.tafsirs || [];
+
+    let resource =
+      list.find(t =>
+        String(
+          t.language_name ||
+          t.language ||
+          ""
+        ).toLowerCase()
+        .includes("urdu")
+      );
+
+    if(!resource){
+
+      resource =
+        list.find(t =>
+          String(t.name || "")
+            .toLowerCase()
+            .includes("ibn kathir")
+        );
+
+    }
+
+    if(!resource){
+      box.textContent =
+        "تفسیر دستیاب نہیں۔";
+      return;
+    }
+
+    const response =
+      await fetch(
+        `${API_QURAN_COM}/tafsirs/` +
+        `${resource.id}/by_ayah/` +
+        `${verses[index].globalNumber}`
+      );
+
+    const data =
+      await response.json();
+
+    const t =
+      data.tafsir ||
+      data.data ||
+      null;
+
+    let text = "";
+
+    if(typeof t === "string"){
+      text = t;
+    }else if(t && typeof t.text === "string"){
+      text = t.text;
+    }
+
+    verses[index].tafseer =
+      text || "تفسیر دستیاب نہیں۔";
+
+    box.innerHTML =
+      escapeHTML(
+        verses[index].tafseer
+      );
+
+  }catch(error){
+
+    console.error(error);
+
+    box.textContent =
+      "تفسیر لوڈ نہیں ہو سکی۔";
+
+  }
+
+}
+
+
+/* ==============================
+   AUDIO
+============================== */
+
+function playAyah(index){
+
+  if(!verses[index]) return;
+
+  currentAyahIndex = index;
+
+  const verse =
+    verses[index];
+
+  audio.src =
+    verse.audio;
+
+  audio.currentTime = 0;
+
+  document
+    .getElementById("audioPlayer")
+    .classList.remove("hidden");
+
+  document
+    .getElementById("audioTitle")
+    .textContent =
+    `سورت — آیت ${verse.number}`;
+
+  highlightAyah(index);
+
+  audio.play()
+    .then(() => {
+
+      document
+        .getElementById("mainPlay")
+        .textContent =
+        "⏸️";
+
+    })
+    .catch(error => {
+
+      console.error(
+        "Audio play error:",
+        error
+      );
+
+      showMessage(
+        "Audio چلانے میں مسئلہ آیا۔ دوبارہ Play دبائیں۔"
+      );
+
+    });
+
+}
+
+
+function toggleMainAudio(){
+
+  if(!audio.src){
+
+    playAyah(0);
+
+    return;
+  }
+
+  if(audio.paused){
+
+    audio.play()
+      .then(() => {
+
+        document
+          .getElementById("mainPlay")
+          .textContent =
+          "⏸️";
+
+      })
+      .catch(() => {
+
+        showMessage(
+          "Audio چل نہیں رہی۔"
+        );
+
+      });
+
+  }else{
+
+    audio.pause();
+
+    document
+      .getElementById("mainPlay")
+      .textContent =
+      "▶️";
+
+  }
+
+}
+
+
+function nextAudio(auto=false){
+
+  if(!verses.length) return;
+
+  if(currentAyahIndex <
+     verses.length - 1){
+
+    playAyah(
+      currentAyahIndex + 1
+    );
+
+  }else{
+
+    document
+      .getElementById("mainPlay")
+      .textContent =
+      "▶️";
+
+    if(auto){
+
+      showMessage(
+        "اس سورت کی تلاوت مکمل ہو گئی۔"
+      );
+
+    }
+
+  }
+
+}
+
+
+function previousAudio(){
+
+  if(!verses.length) return;
+
+  if(currentAyahIndex > 0){
+
+    playAyah(
+      currentAyahIndex - 1
+    );
+
+  }
+
+}
+
+
+function stopAudio(){
+
+  audio.pause();
+
+  audio.currentTime = 0;
+
+  document
+    .getElementById("audioPlayer")
+    ?.classList.add("hidden");
+
+  document
+    .getElementById("mainPlay")
+    ?.textContent =
+    "▶️";
+
+}
+
+
+function highlightAyah(index){
+
+  document
+    .querySelectorAll(".ayah")
+    .forEach(el =>
+      el.classList.remove("current")
+    );
+
+  const el =
+    document.getElementById(
+      `ayah-${index}`
+    );
+
+  if(el){
+
+    el.classList.add("current");
+
+    el.scrollIntoView({
+      behavior:"smooth",
+      block:"center"
+    });
+
+  }
+
+}
+
+
+function updateAudioTime(){
+
+  if(!audio.duration) return;
+
+  const progress =
+    document.getElementById(
+      "audioProgress"
+    );
+
+  progress.value =
+    (audio.currentTime /
+      audio.duration) * 100;
+
+  document
+    .getElementById("currentTime")
+    .textContent =
+    formatTime(
+      audio.currentTime
+    );
+
+  document
+    .getElementById("totalTime")
+    .textContent =
+    formatTime(
+      audio.duration
+    );
+
+}
+
+
+function seekAudio(value){
+
+  if(!audio.duration) return;
+
+  audio.currentTime =
+    (Number(value) / 100) *
+    audio.duration;
+
+}
+
+
+function formatTime(seconds){
+
+  if(!Number.isFinite(seconds)){
+    return "0:00";
+  }
+
+  const min =
+    Math.floor(seconds / 60);
+
+  const sec =
+    Math.floor(seconds % 60)
+      .toString()
+      .padStart(2,"0");
+
+  return `${min}:${sec}`;
+
+}
+
+
+/* ==============================
+   CONTINUE READING
+============================== */
+
+function continueReading(){
+
+  const last =
+    Number(
+      localStorage.getItem(
+        "lastSurah"
+      )
+    );
+
+  if(last >= 1 && last <= 114){
+
+    openSurah(last);
+
+  }else{
+
+    openQuran();
+
+  }
+
+}
+
+
+/* ==============================
+   SETTINGS
+============================== */
+
+function changeArabicSize(value){
+
+  arabicFontSize =
+    Number(value);
+
+  localStorage.setItem(
+    "arabicFontSize",
+    arabicFontSize
+  );
+
+  document
+    .querySelectorAll(".arabic")
+    .forEach(el => {
+
+      el.style.fontSize =
+        `${arabicFontSize}px`;
+
+    });
+
+}
+
+
+async function changeTranslation(value){
+
+  translationId = value;
+
+  localStorage.setItem(
+    "translationId",
+    value
+  );
+
+  if(currentSurah){
+
+    stopAudio();
+
+    await openSurah(
+      currentSurah
+    );
+
+  }
+
+}
+
+
+/* ==============================
+   TASBEEH
+============================== */
+
+function updateTasbeeh(){
+
+  const el =
+    document.getElementById(
+      "tasbeehCount"
+    );
+
+  if(el){
+    el.textContent =
+      tasbeeh;
+  }
+
+}
+
+
+function countTasbeeh(){
+
+  tasbeeh++;
+
+  localStorage.setItem(
+    "tasbeeh",
+    tasbeeh
+  );
+
+  updateTasbeeh();
+
+}
+
+
+function resetTasbeeh(){
+
+  tasbeeh = 0;
+
+  localStorage.setItem(
+    "tasbeeh",
+    "0"
+  );
+
+  updateTasbeeh();
+
+}
+
+
+/* ==============================
+   DUAS
+============================== */
+
+const duas = [
+
+ {
+  title:"سفر کی دعا",
+  arabic:"سُبْحَانَ الَّذِي سَخَّرَ لَنَا هَذَا وَمَا كُنَّا لَهُ مُقْرِنِينَ",
+  urdu:"پاک ہے وہ ذات جس نے اسے ہمارے لیے مسخر کیا، ورنہ ہم اسے قابو میں نہ لا سکتے۔"
+ },
+
+ {
+  title:"کھانے سے پہلے",
+  arabic:"بِسْمِ اللّٰهِ",
+  urdu:"اللہ کے نام سے شروع کرتا ہوں۔"
+ },
+
+ {
+  title:"والدین کے لیے",
+  arabic:"رَبِّ ارْحَمْهُمَا كَمَا رَبَّيَانِي صَغِيرًا",
+  urdu:"اے میرے رب! ان دونوں پر رحم فرما جیسے انہوں نے بچپن میں مجھے پالا۔"
+ },
+
+ {
+  title:"دنیا و آخرت کی بھلائی",
+  arabic:"رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً",
+  urdu:"اے ہمارے رب! ہمیں دنیا میں بھلائی دے اور آخرت میں بھی بھلائی دے۔"
+ }
+
+];
+
+
+function renderDuas(){
+
+  const list =
+    document.getElementById(
+      "duasList"
+    );
+
+  list.innerHTML =
+    duas.map(d => `
+
+      <div class="dua">
+
+       <h3>
+        🤲 ${escapeHTML(d.title)}
+       </h3>
+
+       <div class="arabic">
+        ${escapeHTML(d.arabic)}
+       </div>
+
+       <div class="translation">
+        ${escapeHTML(d.urdu)}
+       </div>
+
+      </div>
+
+    `).join("");
+
+}
+
+
+/* ==============================
+   PRAYER TIMES
+============================== */
+
+function loadPrayerTimes(){
+
+  const output =
+    document.getElementById(
+      "prayerList"
+    );
+
+  if(!navigator.geolocation){
+
+    output.textContent =
+      "آپ کے براؤزر میں location دستیاب نہیں۔";
+
+    return;
+
+  }
+
+  output.innerHTML =
+    "📍 مقام معلوم کیا جا رہا ہے...";
+
+  navigator.geolocation.getCurrentPosition(
+
+    async position => {
+
+      const lat =
+        position.coords.latitude;
+
+      const lon =
+        position.coords.longitude;
+
+      try{
+
+        const today =
+          new Date();
+
+        const date =
+          `${today.getDate()}-` +
+          `${today.getMonth()+1}-` +
+          `${today.getFullYear()}`;
+
+        const url =
+          `https://api.aladhan.com/v1/timings/` +
+          `${date}?latitude=${lat}` +
+          `&longitude=${lon}` +
+          `&method=1`;
+
+        const response =
+          await fetch(url);
+
+        const result =
+          await response.json();
+
+        if(
+          !result.data ||
+          !result.data.timings
+        ){
+
+          throw new Error(
+            "Prayer API error"
+          );
+
+        }
+
+        const t =
+          result.data.timings;
+
+        const names = [
+
+          ["Fajr","فجر"],
+          ["Sunrise","طلوع آفتاب"],
+          ["Dhuhr","ظہر"],
+          ["Asr","عصر"],
+          ["Maghrib","مغرب"],
+          ["Isha","عشاء"]
+
+        ];
+
+        output.innerHTML =
+          names.map(item => `
+
+            <div class="prayer">
+
+              <strong>
+                ${item[1]}
+              </strong>
+
+              <span>
+                ${t[item[0]]}
+              </span>
+
+            </div>
+
+          `).join("");
+
+      }catch(error){
+
+        console.error(error);
+
+        output.innerHTML =
+          "نماز کے اوقات حاصل نہیں ہو سکے۔";
+
+      }
+
+    },
+
+    () => {
+
+      output.innerHTML =
+        "Location کی اجازت ضروری ہے۔";
+
+    }
+
+  );
+
+}
+
+
+/* ==============================
+   QIBLA
+============================== */
+
+function findQibla(){
+
+  const text =
+    document.getElementById(
+      "qiblaText"
+    );
+
+  if(!navigator.geolocation){
+
+    text.textContent =
+      "Location دستیاب نہیں۔";
+
+    return;
+
+  }
+
+  text.textContent =
+    "📍 مقام معلوم کیا جا رہا ہے...";
+
+  navigator.geolocation.getCurrentPosition(
+
+    async position => {
+
+      const lat =
+        position.coords.latitude;
+
+      const lon =
+        position.coords.longitude;
+
+      try{
+
+        const url =
+          `https://api.aladhan.com/v1/qibla/` +
+          `${lat}/${lon}`;
+
+        const response =
+          await fetch(url);
+
+        const result =
+          await response.json();
+
+        const direction =
+          result.data.direction;
+
+        document
+          .getElementById("compass")
+          .style.transform =
+          `rotate(${direction}deg)`;
+
+        text.innerHTML =
+          `🕋 قبلہ کی سمت تقریباً <strong>${direction.toFixed(1)}°</strong> ہے۔`;
+
+      }catch(error){
+
+        console.error(error);
+
+        text.textContent =
+          "قبلہ کی سمت حاصل نہیں ہو سکی۔";
+
+      }
+
+    },
+
+    () => {
+
+      text.textContent =
+        "Location کی اجازت دیں تاکہ قبلہ معلوم ہو سکے۔";
+
+    }
+
+  );
+
+}
+
+
+/* ==============================
+   HELPERS
+============================== */
+
+function showMessage(text){
+
+  const old =
+    document.querySelector(
+      ".message"
+    );
+
+  if(old) old.remove();
+
+  const box =
+    document.createElement(
+      "div"
+    );
+
+  box.className =
+    "message";
+
+  box.textContent =
+    text;
+
+  document.body.appendChild(box);
+
+  setTimeout(() => {
+
+    box.remove();
+
+  },3500);
+
+}
+
+
+function escapeHTML(value){
+
+  return String(value ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+
+}
