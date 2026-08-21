@@ -1,14 +1,14 @@
 "use strict";
 
 /* =====================================================
-   QURAN COMPANION
-   Complete Frontend JavaScript
+   QURAN COMPANION — MAIN SCRIPT
+   No data.js required
 ===================================================== */
 
 console.log("Quran Companion started successfully");
 
 /* =====================================================
-   SUPABASE QURAN FUNCTION
+   SUPABASE EDGE FUNCTION
 ===================================================== */
 
 const QURAN_FUNCTION_URL =
@@ -16,7 +16,7 @@ const QURAN_FUNCTION_URL =
 
 
 /* =====================================================
-   114 SURAH DATA
+   SURAH DATA
 ===================================================== */
 
 const surahs = [
@@ -138,74 +138,62 @@ const surahs = [
 
 
 /* =====================================================
-   APP STATE
+   GLOBAL AUDIO
 ===================================================== */
 
-let currentSurahNumber = null;
-let currentVerses = [];
-let currentAudioIndex = -1;
 let currentAudio = null;
-
-let arabicFontSize = Number(
-  localStorage.getItem("arabicFontSize") || 32
-);
-
-let currentTranslation =
-  localStorage.getItem("translation") ||
-  "ur.jalandhry";
+let currentAudioIndex = -1;
+let currentVerses = [];
 
 
 /* =====================================================
-   SCREEN MANAGEMENT
+   SCREEN CONTROL
 ===================================================== */
 
 function hideAllScreens() {
 
-  const screens = [
-    "homeScreen",
-    "quranScreen",
-    "readerScreen",
-    "duasScreen",
-    "tasbeehScreen"
-  ];
+  document
+    .querySelectorAll("#homeScreen, .app-screen, main > section")
+    .forEach(function(screen) {
 
-  screens.forEach(function(id) {
+      screen.classList.add("hidden");
 
-    const element =
-      document.getElementById(id);
-
-    if (element) {
-      element.classList.add("hidden");
-    }
-
-  });
+    });
 
 }
 
 
-function showScreen(id) {
+function openScreen(id) {
 
   hideAllScreens();
 
-  const screen =
-    document.getElementById(id);
+  const screen = document.getElementById(id);
 
   if (screen) {
     screen.classList.remove("hidden");
   }
 
+  updateHeader(id);
 }
 
 
-function updateHeader(title) {
+function updateHeader(id) {
 
-  const header =
+  const title =
     document.getElementById("headerTitle");
 
-  if (header) {
-    header.textContent = title;
-  }
+  if (!title) return;
 
+  const names = {
+    homeScreen: "Quran Companion",
+    quranScreen: "قرآن",
+    readerScreen: "قرآن",
+    duasScreen: "دعائیں",
+    tasbeehScreen: "تسبیح"
+  };
+
+  title.textContent =
+    names[id] || "Quran Companion";
 }
 
 
@@ -217,18 +205,14 @@ function goHome() {
 
   stopAudio();
 
-  showScreen("homeScreen");
-
-  updateHeader("Quran Companion");
+  openScreen("homeScreen");
 
 }
 
 
 function openQuran() {
 
-  showScreen("quranScreen");
-
-  updateHeader("📖 قرآن مجید");
+  openScreen("quranScreen");
 
   renderSurahs();
 
@@ -238,22 +222,35 @@ function openQuran() {
 function continueReading() {
 
   const saved =
-    Number(
-      localStorage.getItem("lastSurah") || 0
-    );
+    Number(localStorage.getItem("lastSurah") || 0);
 
-  if (
-    saved >= 1 &&
-    saved <= 114
-  ) {
+  openQuran();
 
-    openSurah(saved);
+  if (saved >= 1 && saved <= 114) {
 
-  } else {
-
-    openQuran();
+    setTimeout(function() {
+      openSurah(saved);
+    }, 100);
 
   }
+
+}
+
+
+function openDuas() {
+
+  openScreen("duasScreen");
+
+  renderDuas();
+
+}
+
+
+function openTasbeeh() {
+
+  openScreen("tasbeehScreen");
+
+  updateTasbeeh();
 
 }
 
@@ -270,9 +267,7 @@ function renderSurahs(list) {
   if (!container) return;
 
   const data =
-    Array.isArray(list)
-      ? list
-      : surahs;
+    Array.isArray(list) ? list : surahs;
 
   container.innerHTML = "";
 
@@ -293,11 +288,10 @@ function renderSurahs(list) {
 
       <span class="surah-name">
         <strong>${escapeHTML(surah[1])}</strong>
-        <small>
-          ${escapeHTML(surah[2])}
-          • ${surah[3]} آیات
-        </small>
+        <small>${escapeHTML(surah[2])} • ${surah[3]} آیات</small>
       </span>
+
+      <span>›</span>
     `;
 
     button.addEventListener(
@@ -314,39 +308,89 @@ function renderSurahs(list) {
 }
 
 
+/* =====================================================
+   SEARCH
+===================================================== */
+
 function filterSurahs() {
 
   const input =
-    document.getElementById(
-      "surahSearch"
-    );
+    document.getElementById("surahSearch");
 
   if (!input) return;
 
-  const query =
-    input.value
-      .trim()
-      .toLowerCase();
+  const value =
+    input.value.trim().toLowerCase();
+
+  if (!value) {
+
+    renderSurahs();
+
+    return;
+
+  }
 
   const filtered =
     surahs.filter(function(surah) {
 
       return (
-        String(surah[0])
-          .includes(query) ||
-
-        surah[1]
-          .toLowerCase()
-          .includes(query) ||
-
-        surah[2]
-          .toLowerCase()
-          .includes(query)
+        surah[1].includes(value) ||
+        surah[2].toLowerCase().includes(value) ||
+        String(surah[0]).includes(value)
       );
 
     });
 
   renderSurahs(filtered);
+
+}
+
+
+/* =====================================================
+   SETTINGS
+===================================================== */
+
+function toggleSettings() {
+
+  const settings =
+    document.getElementById("readerSettings");
+
+  if (!settings) return;
+
+  settings.classList.toggle("hidden");
+
+}
+
+
+function changeArabicSize(value) {
+
+  document
+    .querySelectorAll(".arabic")
+    .forEach(function(element) {
+
+      element.style.fontSize =
+        value + "px";
+
+    });
+
+  localStorage.setItem(
+    "arabicFontSize",
+    value
+  );
+
+}
+
+
+function changeTranslation(value) {
+
+  localStorage.setItem(
+    "translation",
+    value
+  );
+
+  showMessage(
+    "ترجمہ کی ترتیب محفوظ ہوگئی۔"
+  );
 
 }
 
@@ -364,35 +408,32 @@ async function openSurah(number) {
     number < 1 ||
     number > 114
   ) {
+
+    showMessage("غلط سورت نمبر");
+
     return;
+
   }
 
-  currentSurahNumber = number;
+  openScreen("readerScreen");
 
   localStorage.setItem(
     "lastSurah",
     String(number)
   );
 
-  showScreen("readerScreen");
-
-  const surah =
-    surahs.find(function(item) {
-      return item[0] === number;
-    });
-
-  updateHeader(
-    surah
-      ? "📖 " + surah[1]
-      : "📖 قرآن"
-  );
-
   const title =
-    document.getElementById(
-      "readerTitle"
-    );
+    document.getElementById("readerTitle");
+
+  const container =
+    document.getElementById("ayahContainer");
 
   if (title) {
+
+    const surah =
+      surahs.find(function(item) {
+        return item[0] === number;
+      });
 
     title.textContent =
       surah
@@ -400,11 +441,6 @@ async function openSurah(number) {
         : "📖 قرآن";
 
   }
-
-  const container =
-    document.getElementById(
-      "ayahContainer"
-    );
 
   if (container) {
 
@@ -415,8 +451,6 @@ async function openSurah(number) {
     `;
 
   }
-
-  stopAudio();
 
   try {
 
@@ -437,29 +471,14 @@ async function openSurah(number) {
         }
       );
 
-    const text =
-      await response.text();
-
-    let result;
-
-    try {
-
-      result =
-        JSON.parse(text);
-
-    } catch (parseError) {
-
-      throw new Error(
-        "Quran server ne valid JSON nahi bheja."
-      );
-
-    }
+    const result =
+      await response.json();
 
     if (!response.ok) {
 
       throw new Error(
         result.error ||
-        "Quran server error: " +
+        "Server error: " +
         response.status
       );
 
@@ -473,11 +492,6 @@ async function openSurah(number) {
       );
 
     }
-
-    currentVerses =
-      Array.isArray(result.verses)
-        ? result.verses
-        : [];
 
     renderAyahs(result);
 
@@ -493,19 +507,12 @@ async function openSurah(number) {
       container.innerHTML = `
         <div class="card">
           <h2>⚠️ قرآن لوڈ نہیں ہو سکا</h2>
-
-          <p>
-            ${escapeHTML(
-              error.message ||
-              "Unknown error"
-            )}
-          </p>
+          <p>${escapeHTML(error.message)}</p>
 
           <button
             class="primary"
             type="button"
-            onclick="openSurah(${number})"
-          >
+            onclick="openSurah(${number})">
             دوبارہ کوشش کریں
           </button>
         </div>
@@ -519,30 +526,28 @@ async function openSurah(number) {
 
 
 /* =====================================================
-   RENDER AYAT
+   RENDER AYAT + TAFSEER
 ===================================================== */
 
 function renderAyahs(result) {
 
   const container =
-    document.getElementById(
-      "ayahContainer"
-    );
+    document.getElementById("ayahContainer");
 
   if (!container) return;
 
   container.innerHTML = "";
 
-  const verses =
-    Array.isArray(result.verses)
-      ? result.verses
-      : [];
+  currentVerses =
+    result.verses || [];
 
-  if (verses.length === 0) {
+  currentAudioIndex = -1;
+
+  if (!currentVerses.length) {
 
     container.innerHTML = `
       <div class="card">
-        <h2>آیات دستیاب نہیں</h2>
+        قرآن کی آیات دستیاب نہیں ہوئیں۔
       </div>
     `;
 
@@ -550,295 +555,251 @@ function renderAyahs(result) {
 
   }
 
-  verses.forEach(function(ayah, index) {
+  currentVerses.forEach(
+    function(ayah, index) {
 
-    const card =
-      document.createElement("article");
+      const card =
+        document.createElement("article");
 
-    card.className =
-      "ayah-card";
+      card.className =
+        "ayah-card";
 
-    card.dataset.index =
-      String(index);
-
-
-    /* AYAH TOP */
-
-    const top =
-      document.createElement("div");
-
-    top.className =
-      "ayah-top";
+      card.id =
+        "ayah-" + index;
 
 
-    const number =
-      document.createElement("span");
+      /* AYAH TOP */
 
-    number.className =
-      "ayah-number";
+      const top =
+        document.createElement("div");
 
-    number.textContent =
-      ayah.number;
-
-
-    const actions =
-      document.createElement("div");
-
-    actions.className =
-      "actions";
+      top.className =
+        "ayah-top";
 
 
-    const playButton =
-      document.createElement("button");
+      const number =
+        document.createElement("span");
 
-    playButton.type = "button";
+      number.className =
+        "ayah-number";
 
-    playButton.textContent =
-      "▶️";
+      number.textContent =
+        ayah.number;
 
-    playButton.title =
-      "آیت سنیں";
 
-    playButton.addEventListener(
-      "click",
-      function() {
+      const actions =
+        document.createElement("div");
 
-        playVerse(
-          index
-        );
+      actions.className =
+        "actions";
+
+
+      const play =
+        document.createElement("button");
+
+      play.type = "button";
+
+      play.textContent =
+        "▶️ سنیں";
+
+      play.addEventListener(
+        "click",
+        function() {
+          playAyah(index);
+        }
+      );
+
+
+      actions.appendChild(play);
+
+      top.appendChild(number);
+      top.appendChild(actions);
+
+
+      /* ARABIC */
+
+      const arabic =
+        document.createElement("div");
+
+      arabic.className =
+        "arabic";
+
+      arabic.textContent =
+        ayah.arabic || "";
+
+
+      /* TRANSLATION */
+
+      const translation =
+        document.createElement("div");
+
+      translation.className =
+        "translation";
+
+      translation.innerHTML = `
+        <div class="translation-title">
+          اردو ترجمہ
+        </div>
+        <div>
+          ${escapeHTML(ayah.urdu || "ترجمہ دستیاب نہیں۔")}
+        </div>
+      `;
+
+
+      /* TAFSEER BUTTON */
+
+      const tafseerButton =
+        document.createElement("button");
+
+      tafseerButton.type = "button";
+
+      tafseerButton.className =
+        "tafseer-btn";
+
+      tafseerButton.textContent =
+        "📚 تفسیر دیکھیں";
+
+
+      /* TAFSEER BOX */
+
+      const tafseer =
+        document.createElement("div");
+
+      tafseer.className =
+        "tafseer hidden";
+
+
+      if (ayah.tafseer) {
+
+        tafseer.innerHTML = `
+          <div style="
+            font-weight:bold;
+            color:#83c7a3;
+            margin-bottom:8px;
+          ">
+            📚 تفسیر
+          </div>
+
+          <div>
+            ${cleanTafseer(ayah.tafseer)}
+          </div>
+
+          ${
+            ayah.tafseerSource
+              ? `
+                <div style="
+                  margin-top:12px;
+                  font-size:12px;
+                  color:#8fa99c;
+                ">
+                  ماخذ: ${escapeHTML(ayah.tafseerSource)}
+                </div>
+              `
+              : ""
+          }
+        `;
+
+      } else {
+
+        tafseer.innerHTML = `
+          <div>
+            تفسیر اس آیت کے لیے ابھی دستیاب نہیں۔
+          </div>
+        `;
 
       }
-    );
 
 
-    actions.appendChild(
-      playButton
-    );
+      tafseerButton.addEventListener(
+        "click",
+        function() {
 
-    top.appendChild(
-      number
-    );
+          tafseer.classList.toggle("hidden");
 
-    top.appendChild(
-      actions
-    );
+          if (tafseer.classList.contains("hidden")) {
 
+            tafseerButton.textContent =
+              "📚 تفسیر دیکھیں";
 
-    /* ARABIC */
+          } else {
 
-    const arabic =
-      document.createElement("div");
+            tafseerButton.textContent =
+              "📕 تفسیر چھپائیں";
 
-    arabic.className =
-      "arabic";
-
-    arabic.style.fontSize =
-      arabicFontSize + "px";
-
-    arabic.textContent =
-      ayah.arabic || "";
-
-
-    /* TRANSLATION */
-
-    const translation =
-      document.createElement("div");
-
-    translation.className =
-      "translation";
-
-    const translationTitle =
-      document.createElement("div");
-
-    translationTitle.className =
-      "translation-title";
-
-    translationTitle.textContent =
-      "اردو ترجمہ";
-
-
-    const translationText =
-      document.createElement("div");
-
-    translationText.textContent =
-      ayah.urdu || "";
-
-
-    translation.appendChild(
-      translationTitle
-    );
-
-    translation.appendChild(
-      translationText
-    );
-
-
-    /* TAFSEER BUTTON */
-
-    const tafseerButton =
-      document.createElement("button");
-
-    tafseerButton.type =
-      "button";
-
-    tafseerButton.className =
-      "tafseer-btn";
-
-    tafseerButton.textContent =
-      "📚 تفسیر دیکھیں";
-
-
-    /* TAFSEER BOX */
-
-    const tafseerBox =
-      document.createElement("div");
-
-    tafseerBox.className =
-      "tafseer hidden";
-
-
-    const tafseerSource =
-      ayah.tafseerSource ||
-      "Verified Tafseer source";
-
-
-    if (ayah.tafseer) {
-
-      tafseerBox.innerHTML = `
-        <strong>
-          📚 ${escapeHTML(tafseerSource)}
-        </strong>
-
-        <div style="margin-top:8px">
-          ${formatTafseer(
-            ayah.tafseer
-          )}
-        </div>
-      `;
-
-    } else {
-
-      tafseerBox.innerHTML = `
-        <strong>
-          📚 Verified Tafseer source
-        </strong>
-
-        <div style="margin-top:8px">
-          Tafseer ka verified text
-          is ayat ke liye available nahi hai.
-        </div>
-      `;
-
-    }
-
-
-    tafseerButton.addEventListener(
-      "click",
-      function() {
-
-        tafseerBox.classList.toggle(
-          "hidden"
-        );
-
-        if (
-          tafseerBox.classList.contains(
-            "hidden"
-          )
-        ) {
-
-          tafseerButton.textContent =
-            "📚 تفسیر دیکھیں";
-
-        } else {
-
-          tafseerButton.textContent =
-            "📚 تفسیر چھپائیں";
+          }
 
         }
-
-      }
-    );
+      );
 
 
-    /* APPEND */
+      /* APPEND */
 
-    card.appendChild(
-      top
-    );
+      card.appendChild(top);
+      card.appendChild(arabic);
+      card.appendChild(translation);
+      card.appendChild(tafseerButton);
+      card.appendChild(tafseer);
 
-    card.appendChild(
-      arabic
-    );
+      container.appendChild(card);
 
-    card.appendChild(
-      translation
-    );
+    }
+  );
 
-    card.appendChild(
-      tafseerButton
-    );
 
-    card.appendChild(
-      tafseerBox
-    );
+  /* RESTORE FONT */
 
-    container.appendChild(
-      card
-    );
+  const savedSize =
+    localStorage.getItem("arabicFontSize");
 
-  });
+  if (savedSize) {
+    changeArabicSize(savedSize);
+  }
 
 }
 
 
 /* =====================================================
-   TAFSEER HTML SAFE FORMAT
+   TAFSEER HTML CLEANING
 ===================================================== */
 
-function formatTafseer(text) {
+function cleanTafseer(text) {
 
-  if (!text) {
-    return "";
-  }
+  if (!text) return "";
 
   /*
-    Tafseer API kabhi <p> tags bhejti hai.
-    Unhein safe tareeqe se paragraphs
+    Tafseer source mein <p> tags
+    aa sakte hain.
+    Unhein proper HTML paragraphs
     mein convert karte hain.
   */
 
-  let value =
+  let safe =
     String(text);
 
-  value =
-    value.replace(
+  safe =
+    safe.replace(
       /<p>/gi,
-      ""
+      "<p>"
     );
 
-  value =
-    value.replace(
+  safe =
+    safe.replace(
       /<\/p>/gi,
-      "<br><br>"
-    );
-
-  value =
-    value.replace(
-      /<br\s*\/?>/gi,
-      "<br>"
+      "</p>"
     );
 
   /*
-    Basic HTML safety.
+    Dangerous scripts remove.
   */
 
-  value =
-    value.replace(
-      /<script[\s\S]*?>[\s\S]*?<\/script>/gi,
+  safe =
+    safe.replace(
+      /<script[\s\S]*?<\/script>/gi,
       ""
     );
 
-  return value;
+  return safe;
+
 }
 
 
@@ -846,21 +807,16 @@ function formatTafseer(text) {
    AUDIO
 ===================================================== */
 
-function playVerse(index) {
+function playAyah(index) {
 
   if (
     !currentVerses[index]
-  ) {
-    return;
-  }
+  ) return;
 
-  currentAudioIndex =
-    index;
-
-  const verse =
+  const ayah =
     currentVerses[index];
 
-  if (!verse.audio) {
+  if (!ayah.audio) {
 
     showMessage(
       "اس آیت کی آواز دستیاب نہیں۔"
@@ -872,18 +828,23 @@ function playVerse(index) {
 
   stopAudio();
 
+  currentAudioIndex =
+    index;
+
   currentAudio =
-    new Audio(
-      verse.audio
-    );
+    new Audio(ayah.audio);
 
   currentAudio.preload =
     "auto";
 
   const player =
-    document.getElementById(
-      "audioPlayer"
-    );
+    document.getElementById("audioPlayer");
+
+  const title =
+    document.getElementById("audioTitle");
+
+  const playButton =
+    document.getElementById("mainPlay");
 
   if (player) {
 
@@ -893,7 +854,24 @@ function playVerse(index) {
 
   }
 
-  updateAudioUI();
+  if (title) {
+
+    title.textContent =
+      "آیت " + ayah.number;
+
+  }
+
+  if (playButton) {
+
+    playButton.textContent =
+      "⏸️";
+
+  }
+
+  currentAudio.addEventListener(
+    "loadedmetadata",
+    updateAudioTime
+  );
 
   currentAudio.addEventListener(
     "timeupdate",
@@ -901,37 +879,25 @@ function playVerse(index) {
   );
 
   currentAudio.addEventListener(
-    "loadedmetadata",
-    updateAudioProgress
-  );
-
-  currentAudio.addEventListener(
     "ended",
     function() {
-
-      markCurrentAyah(
-        false
-      );
 
       if (
         currentAudioIndex <
         currentVerses.length - 1
       ) {
 
-        playVerse(
+        playAyah(
           currentAudioIndex + 1
         );
 
       } else {
 
-        const button =
-          document.getElementById(
-            "mainPlay"
-          );
+        if (playButton) {
 
-        if (button) {
-          button.textContent =
+          playButton.textContent =
             "▶️";
+
         }
 
       }
@@ -939,30 +905,55 @@ function playVerse(index) {
     }
   );
 
-  currentAudio.play()
-    .then(function() {
-
-      markCurrentAyah(
-        true
-      );
-
-      updateAudioUI();
-
-    })
+  currentAudio
+    .play()
     .catch(function(error) {
 
       console.error(
-        "Audio error:",
+        "Audio play error:",
         error
       );
 
       showMessage(
-        "Audio play nahi ho saki."
+        "آڈیو چل نہیں سکی۔ Chromebook میں دوبارہ Play دبائیں۔"
       );
 
-      updateAudioUI();
+      if (playButton) {
+
+        playButton.textContent =
+          "▶️";
+
+      }
 
     });
+
+  const card =
+    document.getElementById(
+      "ayah-" + index
+    );
+
+  if (card) {
+
+    document
+      .querySelectorAll(".ayah-card")
+      .forEach(function(item) {
+
+        item.classList.remove(
+          "current"
+        );
+
+      });
+
+    card.classList.add(
+      "current"
+    );
+
+    card.scrollIntoView({
+      behavior: "smooth",
+      block: "center"
+    });
+
+  }
 
 }
 
@@ -971,11 +962,9 @@ function toggleMainAudio() {
 
   if (!currentAudio) {
 
-    if (
-      currentVerses.length > 0
-    ) {
+    if (currentVerses.length) {
 
-      playVerse(
+      playAyah(
         currentAudioIndex >= 0
           ? currentAudioIndex
           : 0
@@ -987,23 +976,26 @@ function toggleMainAudio() {
 
   }
 
-  if (
-    currentAudio.paused
-  ) {
+  const button =
+    document.getElementById(
+      "mainPlay"
+    );
 
-    currentAudio.play()
+  if (currentAudio.paused) {
+
+    currentAudio
+      .play()
       .then(function() {
 
-        markCurrentAyah(
-          true
-        );
-
-        updateAudioUI();
+        if (button) {
+          button.textContent = "⏸️";
+        }
 
       })
       .catch(function(error) {
 
         console.error(
+          "Audio resume error:",
           error
         );
 
@@ -1013,13 +1005,152 @@ function toggleMainAudio() {
 
     currentAudio.pause();
 
-    markCurrentAyah(
-      false
-    );
-
-    updateAudioUI();
+    if (button) {
+      button.textContent = "▶️";
+    }
 
   }
+
+}
+
+
+function previousAudio() {
+
+  if (!currentVerses.length) return;
+
+  let index =
+    currentAudioIndex - 1;
+
+  if (index < 0) {
+    index = 0;
+  }
+
+  playAyah(index);
+
+}
+
+
+function nextAudio() {
+
+  if (!currentVerses.length) return;
+
+  let index =
+    currentAudioIndex + 1;
+
+  if (
+    index >= currentVerses.length
+  ) {
+    index =
+      currentVerses.length - 1;
+  }
+
+  playAyah(index);
+
+}
+
+
+function seekAudio(value) {
+
+  if (!currentAudio) return;
+
+  if (!currentAudio.duration) return;
+
+  currentAudio.currentTime =
+    (
+      Number(value) / 100
+    ) *
+    currentAudio.duration;
+
+}
+
+
+function updateAudioProgress() {
+
+  if (
+    !currentAudio ||
+    !currentAudio.duration
+  ) return;
+
+  const progress =
+    document.getElementById(
+      "audioProgress"
+    );
+
+  if (progress) {
+
+    progress.value =
+      (
+        currentAudio.currentTime /
+        currentAudio.duration
+      ) *
+      100;
+
+  }
+
+  updateAudioTime();
+
+}
+
+
+function updateAudioTime() {
+
+  if (!currentAudio) return;
+
+  const current =
+    document.getElementById(
+      "currentTime"
+    );
+
+  const total =
+    document.getElementById(
+      "totalTime"
+    );
+
+  if (current) {
+
+    current.textContent =
+      formatTime(
+        currentAudio.currentTime
+      );
+
+  }
+
+  if (total) {
+
+    total.textContent =
+      formatTime(
+        currentAudio.duration
+      );
+
+  }
+
+}
+
+
+function formatTime(seconds) {
+
+  if (
+    !seconds ||
+    !Number.isFinite(seconds)
+  ) {
+    return "0:00";
+  }
+
+  const minutes =
+    Math.floor(
+      seconds / 60
+    );
+
+  const secs =
+    Math.floor(
+      seconds % 60
+    );
+
+  return (
+    minutes +
+    ":" +
+    String(secs).padStart(2,"0")
+  );
 
 }
 
@@ -1036,9 +1167,7 @@ function stopAudio() {
 
   }
 
-  markCurrentAyah(
-    false
-  );
+  currentAudioIndex = -1;
 
   const player =
     document.getElementById(
@@ -1056,301 +1185,8 @@ function stopAudio() {
 }
 
 
-function previousAudio() {
-
-  if (
-    currentVerses.length === 0
-  ) {
-    return;
-  }
-
-  const next =
-    Math.max(
-      0,
-      currentAudioIndex - 1
-    );
-
-  playVerse(next);
-
-}
-
-
-function nextAudio() {
-
-  if (
-    currentVerses.length === 0
-  ) {
-    return;
-  }
-
-  const next =
-    Math.min(
-      currentVerses.length - 1,
-      currentAudioIndex + 1
-    );
-
-  playVerse(next);
-
-}
-
-
-function seekAudio(value) {
-
-  if (
-    !currentAudio ||
-    !Number.isFinite(
-      currentAudio.duration
-    )
-  ) {
-    return;
-  }
-
-  currentAudio.currentTime =
-    (
-      Number(value) / 100
-    ) *
-    currentAudio.duration;
-
-}
-
-
-function updateAudioProgress() {
-
-  if (!currentAudio) {
-    return;
-  }
-
-  const progress =
-    document.getElementById(
-      "audioProgress"
-    );
-
-  const currentTime =
-    document.getElementById(
-      "currentTime"
-    );
-
-  const totalTime =
-    document.getElementById(
-      "totalTime"
-    );
-
-  if (
-    progress &&
-    Number.isFinite(
-      currentAudio.duration
-    )
-  ) {
-
-    progress.value =
-      String(
-        (
-          currentAudio.currentTime /
-          currentAudio.duration
-        ) * 100
-      );
-
-  }
-
-  if (currentTime) {
-
-    currentTime.textContent =
-      formatTime(
-        currentAudio.currentTime
-      );
-
-  }
-
-  if (totalTime) {
-
-    totalTime.textContent =
-      formatTime(
-        currentAudio.duration
-      );
-
-  }
-
-}
-
-
-function updateAudioUI() {
-
-  const button =
-    document.getElementById(
-      "mainPlay"
-    );
-
-  if (!button) {
-    return;
-  }
-
-  if (
-    currentAudio &&
-    !currentAudio.paused
-  ) {
-
-    button.textContent =
-      "⏸️";
-
-  } else {
-
-    button.textContent =
-      "▶️";
-
-  }
-
-}
-
-
-function formatTime(seconds) {
-
-  if (
-    !Number.isFinite(seconds)
-  ) {
-
-    return "0:00";
-
-  }
-
-  const minutes =
-    Math.floor(
-      seconds / 60
-    );
-
-  const remaining =
-    Math.floor(
-      seconds % 60
-    );
-
-  return (
-    minutes +
-    ":" +
-    String(
-      remaining
-    ).padStart(2, "0")
-  );
-
-}
-
-
-function markCurrentAyah(active) {
-
-  document
-    .querySelectorAll(
-      ".ayah-card.current"
-    )
-    .forEach(function(card) {
-
-      card.classList.remove(
-        "current"
-      );
-
-    });
-
-  if (
-    active &&
-    currentAudioIndex >= 0
-  ) {
-
-    const card =
-      document.querySelector(
-        '.ayah-card[data-index="' +
-        currentAudioIndex +
-        '"]'
-      );
-
-    if (card) {
-
-      card.classList.add(
-        "current"
-      );
-
-      card.scrollIntoView({
-        behavior: "smooth",
-        block: "center"
-      });
-
-    }
-
-  }
-
-}
-
-
 /* =====================================================
-   SETTINGS
-===================================================== */
-
-function toggleSettings() {
-
-  const readerSettings =
-    document.getElementById(
-      "readerSettings"
-    );
-
-  if (!readerSettings) {
-    return;
-  }
-
-  readerSettings.classList.toggle(
-    "hidden"
-  );
-
-}
-
-
-function changeArabicSize(value) {
-
-  const size =
-    Number(value);
-
-  if (
-    !Number.isFinite(size)
-  ) {
-    return;
-  }
-
-  arabicFontSize =
-    size;
-
-  localStorage.setItem(
-    "arabicFontSize",
-    String(size)
-  );
-
-  document
-    .querySelectorAll(
-      ".arabic"
-    )
-    .forEach(function(element) {
-
-      element.style.fontSize =
-        size + "px";
-
-    });
-
-}
-
-
-function changeTranslation(value) {
-
-  currentTranslation =
-    value;
-
-  localStorage.setItem(
-    "translation",
-    value
-  );
-
-  showMessage(
-    "Translation setting save ho gayi. Quran ko dobara open karein."
-  );
-
-}
-
-
-/* =====================================================
-   BACK
+   BACK TO SURAHS
 ===================================================== */
 
 function backToSurahs() {
@@ -1366,21 +1202,6 @@ function backToSurahs() {
    DUAS
 ===================================================== */
 
-function openDuas() {
-
-  showScreen(
-    "duasScreen"
-  );
-
-  updateHeader(
-    "🤲 مسنون دعائیں"
-  );
-
-  renderDuas();
-
-}
-
-
 function renderDuas() {
 
   const container =
@@ -1388,54 +1209,32 @@ function renderDuas() {
       "duasList"
     );
 
-  if (!container) {
-    return;
-  }
+  if (!container) return;
 
   const duas = [
 
     {
-      title:
-        "سونے کی دعا",
-
-      arabic:
-        "بِاسْمِكَ اللَّهُمَّ أَمُوتُ وَأَحْيَا",
-
-      meaning:
-        "اے اللہ! تیرے ہی نام کے ساتھ مرتا اور جیتا ہوں۔"
+      title:"سفر کی دعا",
+      arabic:"سُبْحَانَ الَّذِي سَخَّرَ لَنَا هَذَا وَمَا كُنَّا لَهُ مُقْرِنِينَ",
+      meaning:"پاک ہے وہ ذات جس نے اس سواری کو ہمارے لیے مسخر کیا۔"
     },
 
     {
-      title:
-        "کھانے سے پہلے",
-
-      arabic:
-        "بِسْمِ اللَّهِ",
-
-      meaning:
-        "اللہ کے نام سے۔"
+      title:"کھانے سے پہلے",
+      arabic:"بِسْمِ اللَّهِ",
+      meaning:"اللہ کے نام سے۔"
     },
 
     {
-      title:
-        "علم میں اضافہ",
-
-      arabic:
-        "رَبِّ زِدْنِي عِلْمًا",
-
-      meaning:
-        "اے میرے رب! میرے علم میں اضافہ فرما۔"
+      title:"کھانے کے بعد",
+      arabic:"الْحَمْدُ لِلَّهِ",
+      meaning:"تمام تعریفیں اللہ کے لیے ہیں۔"
     },
 
     {
-      title:
-        "والدین کے لیے دعا",
-
-      arabic:
-        "رَبِّ ارْحَمْهُمَا كَمَا رَبَّيَانِي صَغِيرًا",
-
-      meaning:
-        "اے میرے رب! ان دونوں پر رحم فرما جیسے انہوں نے مجھے بچپن میں پالا۔"
+      title:"سونے کی دعا",
+      arabic:"بِاسْمِكَ اللَّهُمَّ أَمُوتُ وَأَحْيَا",
+      meaning:"اے اللہ! تیرے ہی نام کے ساتھ مرتا اور جیتا ہوں۔"
     }
 
   ];
@@ -1445,22 +1244,15 @@ function renderDuas() {
   duas.forEach(function(dua) {
 
     const card =
-      document.createElement(
-        "div"
-      );
+      document.createElement("div");
 
     card.className =
       "card";
 
     card.innerHTML = `
-      <h3>
-        ${escapeHTML(dua.title)}
-      </h3>
+      <h3>${escapeHTML(dua.title)}</h3>
 
-      <div
-        class="arabic"
-        style="font-size:28px"
-      >
+      <div class="arabic">
         ${escapeHTML(dua.arabic)}
       </div>
 
@@ -1469,9 +1261,7 @@ function renderDuas() {
       </div>
     `;
 
-    container.appendChild(
-      card
-    );
+    container.appendChild(card);
 
   });
 
@@ -1482,54 +1272,13 @@ function renderDuas() {
    TASBEEH
 ===================================================== */
 
-let tasbeehCount =
-  Number(
+function getTasbeeh() {
+
+  return Number(
     localStorage.getItem(
       "tasbeehCount"
     ) || 0
   );
-
-
-function openTasbeeh() {
-
-  showScreen(
-    "tasbeehScreen"
-  );
-
-  updateHeader(
-    "📿 تسبیح"
-  );
-
-  updateTasbeeh();
-
-}
-
-
-function countTasbeeh() {
-
-  tasbeehCount++;
-
-  localStorage.setItem(
-    "tasbeehCount",
-    String(tasbeehCount)
-  );
-
-  updateTasbeeh();
-
-}
-
-
-function resetTasbeeh() {
-
-  tasbeehCount =
-    0;
-
-  localStorage.setItem(
-    "tasbeehCount",
-    "0"
-  );
-
-  updateTasbeeh();
 
 }
 
@@ -1544,9 +1293,36 @@ function updateTasbeeh() {
   if (element) {
 
     element.textContent =
-      String(tasbeehCount);
+      getTasbeeh();
 
   }
+
+}
+
+
+function countTasbeeh() {
+
+  const count =
+    getTasbeeh() + 1;
+
+  localStorage.setItem(
+    "tasbeehCount",
+    String(count)
+  );
+
+  updateTasbeeh();
+
+}
+
+
+function resetTasbeeh() {
+
+  localStorage.setItem(
+    "tasbeehCount",
+    "0"
+  );
+
+  updateTasbeeh();
 
 }
 
@@ -1567,48 +1343,43 @@ function showMessage(text) {
   }
 
   const message =
-    document.createElement(
-      "div"
-    );
+    document.createElement("div");
 
   message.className =
     "message";
 
   message.textContent =
-    String(text);
+    text;
 
   document.body.appendChild(
     message
   );
 
-  setTimeout(
-    function() {
+  setTimeout(function() {
 
-      message.remove();
+    message.remove();
 
-    },
-    3000
-  );
+  }, 3000);
 
 }
 
 
 /* =====================================================
-   ESCAPE HTML
+   SAFE HTML
 ===================================================== */
 
-function escapeHTML(value) {
+function escapeHTML(text) {
 
   if (
-    value === null ||
-    value === undefined
+    text === null ||
+    text === undefined
   ) {
 
     return "";
 
   }
 
-  return String(value)
+  return String(text)
     .replaceAll(
       "&",
       "&amp;"
@@ -1634,6 +1405,42 @@ function escapeHTML(value) {
 
 
 /* =====================================================
+   SERVICE WORKER
+===================================================== */
+
+if (
+  "serviceWorker" in navigator
+) {
+
+  window.addEventListener(
+    "load",
+    function() {
+
+      navigator.serviceWorker
+        .register("./sw.js")
+        .then(function() {
+
+          console.log(
+            "Service Worker registered"
+          );
+
+        })
+        .catch(function(error) {
+
+          console.log(
+            "Service Worker registration failed:",
+            error
+          );
+
+        });
+
+    }
+  );
+
+}
+
+
+/* =====================================================
    START APP
 ===================================================== */
 
@@ -1641,49 +1448,13 @@ document.addEventListener(
   "DOMContentLoaded",
   function() {
 
-    const font =
-      document.getElementById(
-        "fontSize"
-      );
-
-    if (font) {
-
-      font.value =
-        String(
-          arabicFontSize
-        );
-
-    }
-
-    const translation =
-      document.getElementById(
-        "translationSelect"
-      );
-
-    if (translation) {
-
-      translation.value =
-        currentTranslation;
-
-    }
-
-    openQuran();
-
-    /*
-      Home screen initial state.
-    */
-
-    showScreen(
-      "homeScreen"
-    );
-
-    updateHeader(
-      "Quran Companion"
-    );
-
     console.log(
       "Quran Companion ready"
     );
+
+    renderSurahs();
+
+    updateTasbeeh();
 
   }
 );
