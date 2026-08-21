@@ -17,394 +17,171 @@ body{
 button,input,select{font:inherit}
 button{cursor:pointer}
 .hidden{display:none!important}
-
-.app{
-  min-height:100vh;
-  padding-bottom:75px;
-}
-
+.app{min-height:100vh;padding-bottom:75px}
 header{
-  position:sticky;
-  top:0;
-  z-index:20;
-  background:#0b241b;
-  border-bottom:1px solid #1b4434;
+  position:sticky;top:0;z-index:20;
+  background:#0b241b;border-bottom:1px solid #1b4434
 }
-
 .header-inner{
-  max-width:900px;
-  margin:auto;
-  padding:16px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px;
+  max-width:900px;margin:auto;padding:14px;
+  display:flex;align-items:center;justify-content:space-between;gap:8px
 }
-
-.header-inner h1,
-.header-inner h2{
-  margin:0;
-  text-align:center;
-}
-
 .header-btn{
-  background:#12382a;
-  color:white;
-  border:1px solid #285844;
-  border-radius:12px;
-  padding:9px 13px;
+  background:#12382a;color:white;border:1px solid #285844;
+  border-radius:12px;padding:9px 13px
 }
-
-main{
-  max-width:900px;
-  margin:auto;
-  padding:18px;
-}
-
+main{max-width:900px;margin:auto;padding:15px}
 .card{
-  background:#0d281f;
-  border:1px solid #1d4938;
-  border-radius:18px;
-  padding:18px;
-  margin-bottom:15px;
+  background:#0d281f;border:1px solid #1d4938;
+  border-radius:18px;padding:18px;margin-bottom:14px
 }
-
-.home-title{
-  text-align:center;
-  padding:30px 10px;
-}
-
-.home-title h1{
-  font-size:34px;
-  margin:10px 0;
-}
-
-.home-title p{
-  color:#b9cbc2;
-}
-
+.home-title{text-align:center;padding:25px 10px}
+.home-title .logo{font-size:58px}
+.home-title h1{font-size:32px;margin:8px 0}
+.home-title p{color:#b9cbc2}
 .grid{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:12px;
+  display:grid;grid-template-columns:repeat(2,1fr);gap:12px
 }
-
 .menu-btn{
-  min-height:110px;
-  border:1px solid #255540;
-  background:#0d281f;
-  color:white;
-  border-radius:18px;
-  padding:15px;
+  min-height:110px;border:1px solid #255540;background:#0d281f;
+  color:white;border-radius:18px;padding:14px
 }
-
-.menu-btn span{
-  display:block;
-  font-size:34px;
-  margin-bottom:8px;
-}
-
-.menu-btn small{
-  color:#c8d8d0;
-}
-
-.search{
-  display:flex;
-  gap:8px;
-  margin-bottom:15px;
-}
-
+.menu-btn span{display:block;font-size:34px;margin-bottom:7px}
 .search input{
-  width:100%;
-  padding:13px;
-  border-radius:12px;
-  border:1px solid #315b49;
-  background:#081c15;
-  color:white;
-  outline:none;
+  width:100%;padding:13px;border-radius:12px;
+  border:1px solid #315b49;background:#081c15;color:white;outline:none
 }
-
-.surah-list{
-  display:flex;
-  flex-direction:column;
-  gap:9px;
-}
-
+.surah-list{display:flex;flex-direction:column;gap:9px}
 .surah-card{
-  width:100%;
-  border:1px solid #224d3b;
-  background:#0d281f;
-  color:white;
-  border-radius:15px;
-  padding:14px;
-  display:flex;
-  align-items:center;
-  gap:14px;
-  text-align:right;
+  width:100%;border:1px solid #224d3b;background:#0d281f;color:white;
+  border-radius:15px;padding:14px;display:flex;align-items:center;
+  gap:14px;text-align:right
 }
-
-.surah-card:hover{
-  background:#123529;
-}
-
 .surah-number{
-  min-width:42px;
-  height:42px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  border-radius:50%;
-  background:#174b37;
-  color:#dceee5;
+  min-width:42px;height:42px;display:flex;align-items:center;
+  justify-content:center;border-radius:50%;background:#174b37
 }
-
-.surah-name{
-  flex:1;
-}
-
-.surah-name strong{
-  display:block;
-  font-size:18px;
-}
-
-.surah-name small{
-  display:block;
-  margin-top:4px;
-  color:#9eb4a9;
-}
-
-.loading{
-  text-align:center;
-  padding:30px;
-  color:#b9cbc2;
-}
-
+.surah-name{flex:1}
+.surah-name strong{display:block;font-size:18px}
+.surah-name small{display:block;margin-top:4px;color:#9eb4a9}
+.loading{text-align:center;padding:30px;color:#b9cbc2}
 .reader-top{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:8px;
-  margin-bottom:12px;
+  display:flex;align-items:center;justify-content:space-between;
+  gap:8px;margin-bottom:12px
 }
-
-.reader-top h2{
-  margin:0;
-}
-
-.settings{
-  background:#0d281f;
-  border:1px solid #1d4938;
-  border-radius:16px;
-  padding:15px;
-  margin-bottom:15px;
-}
-
-.settings label{
-  display:block;
-  margin-bottom:14px;
-}
-
-.settings input,
-.settings select{
-  width:100%;
-  margin-top:8px;
-}
-
 .ayah-card{
-  background:#0c251d;
-  border:1px solid #1d4938;
-  border-radius:18px;
-  padding:18px;
-  margin-bottom:15px;
+  background:#0c251d;border:1px solid #1d4938;
+  border-radius:18px;padding:18px;margin-bottom:14px
 }
-
 .ayah-card.current{
-  border-color:#7dbb9c;
-  box-shadow:0 0 0 2px rgba(125,187,156,.15);
+  border-color:#83c7a3;
+  box-shadow:0 0 0 2px rgba(125,187,156,.15)
 }
-
 .ayah-top{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:18px;
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:15px
 }
-
 .ayah-number{
-  background:#174b37;
-  min-width:38px;
-  height:38px;
-  border-radius:50%;
-  display:flex;
-  justify-content:center;
-  align-items:center;
+  background:#174b37;min-width:38px;height:38px;
+  border-radius:50%;display:flex;align-items:center;justify-content:center
 }
-
-.actions{
-  display:flex;
-  gap:7px;
+.actions{display:flex;gap:7px}
+.actions button,.audio-controls button{
+  border:1px solid #315b49;background:#12382a;color:white;
+  border-radius:10px;padding:9px 12px
 }
-
-.actions button,
-.audio-controls button{
-  border:1px solid #315b49;
-  background:#12382a;
-  color:white;
-  border-radius:10px;
-  padding:9px 12px;
-}
-
 .arabic{
-  font-size:32px;
-  line-height:2.25;
-  text-align:right;
-  margin-bottom:18px;
+  font-size:32px;line-height:2.2;text-align:right;margin-bottom:16px
 }
-
 .translation{
-  background:#102f25;
-  border-radius:13px;
-  padding:15px;
-  line-height:2;
-  color:#d8e6df;
+  background:#102f25;border-radius:13px;padding:14px;
+  line-height:2;color:#d8e6df
 }
-
-.translation-title{
-  color:#83c7a3;
-  font-weight:bold;
-  margin-bottom:6px;
+.translation-title,.info-title{
+  color:#83c7a3;font-weight:bold;margin-bottom:6px
 }
-
 .tafseer-btn{
-  width:100%;
-  margin-top:12px;
-  padding:12px;
-  border:1px solid #315b49;
-  background:#12382a;
-  color:white;
-  border-radius:12px;
+  width:100%;margin-top:11px;padding:12px;
+  border:1px solid #315b49;background:#12382a;color:white;border-radius:12px
 }
-
 .tafseer{
-  margin-top:10px;
-  background:#081c15;
-  border-radius:12px;
-  padding:14px;
-  line-height:2;
-  color:#c9d8d1;
+  margin-top:10px;background:#081c15;border-radius:12px;
+  padding:14px;line-height:2;color:#c9d8d1
 }
-
-.audio-player{
-  position:fixed;
-  bottom:65px;
-  left:50%;
-  transform:translateX(-50%);
-  width:min(880px,94%);
-  z-index:30;
-  background:#0b241b;
-  border:1px solid #37664f;
-  border-radius:17px;
-  padding:12px;
-  box-shadow:0 10px 30px #0008;
+.settings{
+  background:#0d281f;border:1px solid #1d4938;
+  border-radius:16px;padding:15px;margin-bottom:14px
 }
-
-.audio-title{
-  text-align:center;
-  margin-bottom:8px;
-}
-
-.audio-controls{
-  display:flex;
-  justify-content:center;
-  gap:10px;
-}
-
-.audio-progress{
-  width:100%;
-  margin-top:10px;
-}
-
-.audio-time{
-  display:flex;
-  justify-content:space-between;
-  direction:ltr;
-  color:#9fb6aa;
-  font-size:12px;
-}
-
+.settings label{display:block;margin-bottom:13px}
+.settings input,.settings select{width:100%;margin-top:8px}
 .primary{
-  width:100%;
-  padding:13px;
-  border:0;
-  border-radius:13px;
-  background:#216c4d;
-  color:white;
+  width:100%;padding:13px;border:0;border-radius:13px;
+  background:#216c4d;color:white
 }
-
+.prayer-grid{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:10px
+}
+.prayer-card{
+  background:#102f25;border:1px solid #285844;
+  border-radius:15px;padding:15px;text-align:center
+}
+.prayer-card strong{display:block;font-size:20px;margin-bottom:8px}
+.prayer-card span{font-size:22px;color:#83c7a3}
+.kaaba{
+  text-align:center
+}
+.kaaba-icon{font-size:90px;margin:15px}
+.dua-card{
+  background:#102f25;border:1px solid #285844;
+  border-radius:15px;padding:16px;margin-bottom:10px;line-height:2
+}
+.dua-arabic{font-size:24px;line-height:2.2;margin-bottom:10px}
+.tasbeeh-number{font-size:60px;margin:20px}
+.audio-player{
+  position:fixed;bottom:65px;left:50%;transform:translateX(-50%);
+  width:min(880px,94%);z-index:30;background:#0b241b;
+  border:1px solid #37664f;border-radius:17px;padding:12px;
+  box-shadow:0 10px 30px #0008
+}
+.audio-title{text-align:center;margin-bottom:8px}
+.audio-controls{display:flex;justify-content:center;gap:10px}
+.audio-progress{width:100%;margin-top:10px}
+.audio-time{
+  display:flex;justify-content:space-between;direction:ltr;
+  color:#9fb6aa;font-size:12px
+}
 .message{
-  position:fixed;
-  left:50%;
-  bottom:85px;
-  transform:translateX(-50%);
-  z-index:100;
-  background:#173c2d;
-  border:1px solid #47735c;
-  padding:12px 18px;
-  border-radius:12px;
+  position:fixed;left:50%;bottom:85px;transform:translateX(-50%);
+  z-index:100;background:#173c2d;border:1px solid #47735c;
+  padding:12px 18px;border-radius:12px
 }
-
 .bottom-nav{
-  position:fixed;
-  bottom:0;
-  left:0;
-  right:0;
-  z-index:50;
-  height:65px;
-  background:#091c15;
-  border-top:1px solid #234b3a;
-  display:flex;
-  justify-content:center;
+  position:fixed;bottom:0;left:0;right:0;z-index:50;height:65px;
+  background:#091c15;border-top:1px solid #234b3a;
+  display:flex;justify-content:center
 }
-
 .bottom-nav button{
-  flex:1;
-  max-width:180px;
-  background:none;
-  color:#b9cbc2;
-  border:0;
+  flex:1;max-width:180px;background:none;color:#b9cbc2;border:0
 }
-
-.bottom-nav span,
-.bottom-nav small{
-  display:block;
-}
-
-.bottom-nav span{
-  font-size:21px;
-}
-
-.bottom-nav small{
-  margin-top:3px;
-}
-
+.bottom-nav span,.bottom-nav small{display:block}
+.bottom-nav span{font-size:21px}
+.bottom-nav small{margin-top:3px}
 @media(max-width:600px){
   main{padding:12px}
-  .grid{grid-template-columns:repeat(2,1fr)}
   .arabic{font-size:28px}
-  .home-title h1{font-size:28px}
+  .prayer-grid{grid-template-columns:repeat(2,1fr)}
 }
 </style>
 </head>
 
 <body>
-
 <div class="app">
 
 <header>
   <div class="header-inner">
-    <button class="header-btn" id="backBtn" type="button" onclick="goHome()">⌂</button>
+    <button class="header-btn" type="button" onclick="goHome()">⌂</button>
     <h2 id="headerTitle">Quran Companion</h2>
-    <button class="header-btn" id="settingsBtn" type="button" onclick="toggleSettings()">⚙️</button>
+    <button class="header-btn" type="button" onclick="toggleSettings()">⚙️</button>
   </div>
 </header>
 
@@ -412,9 +189,9 @@ main{
 
 <section id="homeScreen">
   <div class="home-title">
-    <div style="font-size:55px">📖</div>
+    <div class="logo">📖</div>
     <h1>Quran Companion</h1>
-    <p>قرآن، ترجمہ، تلاوت اور تفسیر</p>
+    <p>قرآن، ترجمہ، تفسیر، نماز اور دعائیں</p>
   </div>
 
   <div class="grid">
@@ -426,6 +203,10 @@ main{
       <span>▶️</span>جاری رکھیں
     </button>
 
+    <button class="menu-btn" type="button" onclick="openPrayer()">
+      <span>🕌</span>نماز کے اوقات
+    </button>
+
     <button class="menu-btn" type="button" onclick="openDuas()">
       <span>🤲</span>دعائیں
     </button>
@@ -433,17 +214,20 @@ main{
     <button class="menu-btn" type="button" onclick="openTasbeeh()">
       <span>📿</span>تسبیح
     </button>
+
+    <button class="menu-btn" type="button" onclick="openKaaba()">
+      <span>🕋</span>خانہ کعبہ
+    </button>
   </div>
 </section>
 
 <section id="quranScreen" class="hidden">
   <div class="card">
     <div class="search">
-      <input id="surahSearch" name="surahSearch" type="search"
-             placeholder="سورت تلاش کریں..." oninput="filterSurahs()">
+      <input id="surahSearch" type="search"
+        placeholder="سورت تلاش کریں..." oninput="filterSurahs()">
     </div>
   </div>
-
   <div id="surahList" class="surah-list">
     <div class="loading">سورتیں لوڈ ہو رہی ہیں...</div>
   </div>
@@ -458,59 +242,66 @@ main{
   </div>
 
   <div id="readerSettings" class="settings hidden">
-
     <label>
       عربی فونٹ سائز
-      <input id="fontSize" name="fontSize" type="range"
-             min="22" max="50" value="32"
-             oninput="changeArabicSize(this.value)">
+      <input id="fontSize" type="range" min="22" max="50" value="32"
+        oninput="changeArabicSize(this.value)">
     </label>
-
-    <label>
-      ترجمہ
-      <select id="translationSelect" name="translationSelect"
-              onchange="changeTranslation(this.value)">
-        <option value="ur.jalandhry">اردو — جالندھری</option>
-        <option value="en.sahih">English — Sahih International</option>
-      </select>
-    </label>
-
   </div>
 
   <div id="ayahContainer">
     <div class="loading">قرآن لوڈ ہو رہا ہے...</div>
   </div>
+</section>
 
+<section id="prayerScreen" class="hidden">
+  <div class="card">
+    <h2>🕌 نماز کے اوقات</h2>
+    <p id="prayerLocation">مقام معلوم کیا جا رہا ہے...</p>
+    <button class="primary" type="button" onclick="loadPrayerTimes()">
+      🔄 اوقات تازہ کریں
+    </button>
+  </div>
+
+  <div id="prayerList" class="prayer-grid">
+    <div class="loading">نماز کے اوقات لوڈ ہو رہے ہیں...</div>
+  </div>
 </section>
 
 <section id="duasScreen" class="hidden">
-  <div class="card">
-    <h2>🤲 مسنون دعائیں</h2>
-  </div>
+  <div class="card"><h2>🤲 مسنون دعائیں</h2></div>
   <div id="duasList"></div>
 </section>
 
 <section id="tasbeehScreen" class="hidden">
   <div class="card" style="text-align:center">
     <h2>📿 تسبیح</h2>
-    <div style="font-size:55px;margin:25px" id="tasbeehCount">0</div>
-
-    <button class="primary" type="button" onclick="countTasbeeh()">
-      ذکر کریں
-    </button>
-
+    <div class="tasbeeh-number" id="tasbeehCount">0</div>
+    <button class="primary" type="button" onclick="countTasbeeh()">ذکر کریں</button>
     <br><br>
+    <button class="header-btn" type="button" onclick="resetTasbeeh()">ری سیٹ</button>
+  </div>
+</section>
 
-    <button class="header-btn" type="button" onclick="resetTasbeeh()">
-      ری سیٹ
-    </button>
+<section id="kaabaScreen" class="hidden">
+  <div class="card kaaba">
+    <div class="kaaba-icon">🕋</div>
+    <h2>خانہ کعبہ</h2>
+    <p>بیت اللہ، مسجد الحرام، مکہ مکرمہ</p>
+  </div>
+
+  <div class="card">
+    <div class="info-title">خانہ کعبہ</div>
+    <p>
+      خانہ کعبہ مسلمانوں کا قبلہ اور مسجد الحرام کا مرکزی مقدس مقام ہے۔
+      نماز میں دنیا بھر کے مسلمان اسی سمت رخ کرتے ہیں۔
+    </p>
   </div>
 </section>
 
 </main>
 
 <div id="audioPlayer" class="audio-player hidden">
-
   <div id="audioTitle" class="audio-title">آیت</div>
 
   <div class="audio-controls">
@@ -519,39 +310,35 @@ main{
     <button type="button" onclick="nextAudio()">⏭</button>
   </div>
 
-  <input id="audioProgress" name="audioProgress"
-         class="audio-progress"
-         type="range" min="0" max="100" value="0"
-         oninput="seekAudio(this.value)">
+  <input id="audioProgress" class="audio-progress"
+    type="range" min="0" max="100" value="0"
+    oninput="seekAudio(this.value)">
 
   <div class="audio-time">
     <span id="totalTime">0:00</span>
     <span id="currentTime">0:00</span>
   </div>
-
 </div>
 
 <nav class="bottom-nav">
   <button type="button" onclick="goHome()">
     <span>⌂</span><small>ہوم</small>
   </button>
-
   <button type="button" onclick="openQuran()">
     <span>📖</span><small>قرآن</small>
   </button>
-
+  <button type="button" onclick="openPrayer()">
+    <span>🕌</span><small>نماز</small>
+  </button>
   <button type="button" onclick="openDuas()">
     <span>🤲</span><small>دعائیں</small>
   </button>
-
-  <button type="button" onclick="openTasbeeh()">
-    <span>📿</span><small>ذکر</small>
-  </button>
 </nav>
+
+<div id="appMessage" class="message hidden"></div>
 
 </div>
 
 <script src="./script.js"></script>
-
 </body>
 </html>
