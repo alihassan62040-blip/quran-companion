@@ -1835,3 +1835,1224 @@ if (home) {
 
 }
 );
+/* =========================================================
+   QURAN COMPANION — EXTRA FEATURES PACK
+   Prayer + Kaaba + Duas + Tasbeeh + Universe + Creatures
+   Quran reader کو disturb نہیں کرتا
+========================================================= */
+
+(function () {
+  "use strict";
+
+  console.log("Quran Companion Extra Features loaded");
+
+  /* =========================================================
+     EXTRA CSS
+  ========================================================= */
+
+  const extraStyle = document.createElement("style");
+
+  extraStyle.textContent = `
+    .feature-grid{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:12px;
+      margin-top:15px;
+    }
+
+    .feature-card{
+      background:#0d281f;
+      border:1px solid #1d4938;
+      border-radius:18px;
+      padding:18px;
+      margin-bottom:14px;
+    }
+
+    .feature-card h2,
+    .feature-card h3{
+      margin-top:0;
+    }
+
+    .feature-button{
+      width:100%;
+      background:#12382a;
+      color:white;
+      border:1px solid #315b49;
+      border-radius:13px;
+      padding:12px;
+      margin-top:8px;
+    }
+
+    .feature-button.primary{
+      background:#216c4d;
+    }
+
+    .prayer-grid{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:10px;
+      margin-top:15px;
+    }
+
+    .prayer-time{
+      background:#102f25;
+      border:1px solid #285440;
+      border-radius:14px;
+      padding:15px;
+      text-align:center;
+    }
+
+    .prayer-time strong{
+      display:block;
+      font-size:18px;
+      margin-bottom:7px;
+    }
+
+    .prayer-time span{
+      font-size:22px;
+      color:#8fd0ac;
+    }
+
+    .kaaba-box{
+      text-align:center;
+      overflow:hidden;
+    }
+
+    .kaaba-box img{
+      width:100%;
+      max-height:320px;
+      object-fit:cover;
+      border-radius:16px;
+      margin-bottom:15px;
+    }
+
+    .dua-card{
+      background:#0c251d;
+      border:1px solid #1d4938;
+      border-radius:18px;
+      padding:18px;
+      margin-bottom:14px;
+    }
+
+    .dua-arabic{
+      font-size:25px;
+      line-height:2.2;
+      margin-bottom:12px;
+    }
+
+    .dua-urdu{
+      color:#d4e4dc;
+      line-height:2;
+    }
+
+    .tasbeeh-big{
+      text-align:center;
+      font-size:70px;
+      color:#8fd0ac;
+      margin:25px 0;
+    }
+
+    .zikr-text{
+      text-align:center;
+      font-size:28px;
+      margin:15px 0;
+    }
+
+    .info-list{
+      line-height:2.1;
+      color:#d2e0d9;
+    }
+
+    .feature-back{
+      margin-bottom:12px;
+    }
+
+    @media(max-width:600px){
+      .feature-grid{
+        grid-template-columns:repeat(2,1fr);
+      }
+
+      .prayer-grid{
+        grid-template-columns:repeat(2,1fr);
+      }
+    }
+  `;
+
+  document.head.appendChild(extraStyle);
+
+
+  /* =========================================================
+     CREATE MISSING SCREENS
+  ========================================================= */
+
+  function createScreen(id, title) {
+
+    if (document.getElementById(id)) {
+      return document.getElementById(id);
+    }
+
+    const main = document.querySelector("main");
+
+    if (!main) {
+      console.error("Main element not found");
+      return null;
+    }
+
+    const section = document.createElement("section");
+
+    section.id = id;
+    section.className = "hidden";
+
+    section.innerHTML = `
+      <div class="reader-top">
+        <button
+          class="header-btn feature-back"
+          type="button"
+          onclick="goHome()">
+          ← واپس
+        </button>
+
+        <h2>${title}</h2>
+
+        <div></div>
+      </div>
+
+      <div id="${id}Content"></div>
+    `;
+
+    main.appendChild(section);
+
+    return section;
+  }
+
+
+  /* =========================================================
+     CREATE ALL EXTRA SCREENS
+  ========================================================= */
+
+  createScreen("prayerScreen", "🕌 نماز");
+
+  createScreen("kaabaScreen", "🕋 خانہ کعبہ");
+
+  createScreen("duasScreen", "🤲 دعائیں");
+
+  createScreen("tasbeehScreen", "📿 تسبیح");
+
+  createScreen("universeScreen", "🌌 کائنات");
+
+  createScreen("creaturesScreen", "🐾 جاندار");
+
+  createScreen("historyScreen", "📚 اسلامی معلومات");
+
+  createScreen("aiScreen", "🤖 Quran Companion");
+
+
+  /* =========================================================
+     SAFE SCREEN OPEN
+  ========================================================= */
+
+  window.openExtraScreen = function (id) {
+
+    if (typeof hideAllScreens === "function") {
+      hideAllScreens();
+    } else {
+      document
+        .querySelectorAll("main section")
+        .forEach(function (s) {
+          s.classList.add("hidden");
+        });
+    }
+
+    const screen = document.getElementById(id);
+
+    if (screen) {
+      screen.classList.remove("hidden");
+    }
+  };
+
+
+  /* =========================================================
+     PRAYER
+  ========================================================= */
+
+  window.openPrayer = function () {
+
+    openExtraScreen("prayerScreen");
+
+    renderPrayerInfo();
+
+    loadPrayerTimes();
+  };
+
+
+  function renderPrayerInfo() {
+
+    const box =
+      document.getElementById("prayerScreenContent");
+
+    if (!box) return;
+
+    box.innerHTML = `
+      <div class="feature-card">
+
+        <h2>🕌 نماز</h2>
+
+        <p>
+          نماز اسلام کے بنیادی ارکان میں سے ہے۔
+          یہاں آج کے نماز کے اوقات بھی دکھائے جائیں گے۔
+        </p>
+
+        <button
+          class="feature-button primary"
+          type="button"
+          onclick="loadPrayerTimes()">
+          🔄 نماز کے اوقات تازہ کریں
+        </button>
+
+      </div>
+
+      <div class="feature-card">
+
+        <h3>نماز کے پانچ اوقات</h3>
+
+        <div
+          id="prayerTimes"
+          class="prayer-grid">
+
+          <div class="loading">
+            نماز کے اوقات حاصل ہو رہے ہیں...
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="feature-card">
+
+        <h3>📖 نماز کا مختصر طریقہ</h3>
+
+        <div class="info-list">
+
+          <p><strong>1۔ نیت:</strong>
+          دل میں نماز کی نیت کریں۔</p>
+
+          <p><strong>2۔ تکبیر:</strong>
+          اللہ اکبر کہہ کر نماز شروع کریں۔</p>
+
+          <p><strong>3۔ قیام:</strong>
+          سورۃ الفاتحہ اور قرآن کی تلاوت کریں۔</p>
+
+          <p><strong>4۔ رکوع:</strong>
+          رکوع میں اللہ کی تسبیح بیان کریں۔</p>
+
+          <p><strong>5۔ سجدہ:</strong>
+          اللہ کے سامنے سجدہ کریں۔</p>
+
+          <p><strong>6۔ قعدہ:</strong>
+          تشہد اور درود پڑھیں۔</p>
+
+          <p><strong>7۔ سلام:</strong>
+          دائیں اور بائیں سلام پھیر کر نماز مکمل کریں۔</p>
+
+        </div>
+
+      </div>
+    `;
+  }
+
+
+  window.loadPrayerTimes = async function () {
+
+    const box =
+      document.getElementById("prayerTimes");
+
+    if (!box) return;
+
+    box.innerHTML =
+      `<div class="loading">
+        نماز کے اوقات حاصل ہو رہے ہیں...
+      </div>`;
+
+    let latitude = 24.8607;
+    let longitude = 67.0011;
+
+    try {
+
+      if (
+        navigator.geolocation &&
+        location.protocol === "https:"
+      ) {
+
+        const position =
+          await new Promise(function(resolve, reject) {
+
+            navigator.geolocation.getCurrentPosition(
+              resolve,
+              reject,
+              {
+                enableHighAccuracy:false,
+                timeout:8000,
+                maximumAge:3600000
+              }
+            );
+
+          });
+
+        latitude =
+          position.coords.latitude;
+
+        longitude =
+          position.coords.longitude;
+      }
+
+    } catch (error) {
+
+      console.log(
+        "Location unavailable, using default location."
+      );
+
+    }
+
+    try {
+
+      const today =
+        new Date();
+
+      const date =
+        today.getDate();
+
+      const month =
+        today.getMonth() + 1;
+
+      const year =
+        today.getFullYear();
+
+      const url =
+        "https://api.aladhan.com/v1/timings/" +
+        date + "-" +
+        month + "-" +
+        year +
+        "?latitude=" +
+        encodeURIComponent(latitude) +
+        "&longitude=" +
+        encodeURIComponent(longitude) +
+        "&method=1";
+
+      const response =
+        await fetch(url);
+
+      if (!response.ok) {
+        throw new Error(
+          "Prayer API error"
+        );
+      }
+
+      const result =
+        await response.json();
+
+      const timings =
+        result?.data?.timings;
+
+      if (!timings) {
+        throw new Error(
+          "Prayer times unavailable"
+        );
+      }
+
+      box.innerHTML = `
+
+        <div class="prayer-time">
+          <strong>فجر</strong>
+          <span>${timings.Fajr}</span>
+        </div>
+
+        <div class="prayer-time">
+          <strong>ظہر</strong>
+          <span>${timings.Dhuhr}</span>
+        </div>
+
+        <div class="prayer-time">
+          <strong>عصر</strong>
+          <span>${timings.Asr}</span>
+        </div>
+
+        <div class="prayer-time">
+          <strong>مغرب</strong>
+          <span>${timings.Maghrib}</span>
+        </div>
+
+        <div class="prayer-time">
+          <strong>عشاء</strong>
+          <span>${timings.Isha}</span>
+        </div>
+
+      `;
+
+    } catch (error) {
+
+      console.error(
+        "Prayer times error:",
+        error
+      );
+
+      box.innerHTML = `
+        <div class="feature-card">
+          نماز کے اوقات اس وقت حاصل نہیں ہو سکے۔
+          <br><br>
+          انٹرنیٹ کنکشن چیک کرکے دوبارہ کوشش کریں۔
+        </div>
+      `;
+    }
+  };
+
+
+  /* =========================================================
+     KAABA
+  ========================================================= */
+
+  window.openKaaba = function () {
+
+    openExtraScreen("kaabaScreen");
+
+    const box =
+      document.getElementById("kaabaScreenContent");
+
+    if (!box) return;
+
+    box.innerHTML = `
+
+      <div class="feature-card kaaba-box">
+
+        <h2>🕋 خانہ کعبہ</h2>
+
+        <img
+          src="https://images.unsplash.com/photo-1565552645632-d725f8bfc19a?auto=format&fit=crop&w=1200&q=80"
+          alt="Khana Kaaba"
+          loading="lazy"
+        >
+
+        <p class="info-list">
+          خانہ کعبہ مسجد الحرام، مکہ مکرمہ میں واقع ہے۔
+          مسلمان نماز میں اسی سمت یعنی قبلہ رخ ہو کر نماز ادا کرتے ہیں۔
+        </p>
+
+      </div>
+
+      <div class="feature-card">
+
+        <h3>🕋 اہم معلومات</h3>
+
+        <div class="info-list">
+
+          <p>
+            <strong>مقام:</strong>
+            مکہ مکرمہ، سعودی عرب
+          </p>
+
+          <p>
+            <strong>مسجد:</strong>
+            مسجد الحرام
+          </p>
+
+          <p>
+            <strong>قبلہ:</strong>
+            خانہ کعبہ
+          </p>
+
+          <p>
+            حضرت ابراہیم علیہ السلام اور حضرت اسماعیل علیہ السلام
+            نے اللہ کے حکم سے بیت اللہ کی تعمیر میں حصہ لیا۔
+          </p>
+
+        </div>
+
+      </div>
+    `;
+  };
+
+
+  /* =========================================================
+     DUAS
+  ========================================================= */
+
+  const duas = [
+
+    {
+      title:"سونے کی دعا",
+      arabic:"بِاسْمِكَ اللَّهُمَّ أَمُوتُ وَأَحْيَا",
+      urdu:"اے اللہ! میں تیرے ہی نام کے ساتھ مرتا اور جیتا ہوں۔"
+    },
+
+    {
+      title:"جاگنے کی دعا",
+      arabic:"الْحَمْدُ لِلَّهِ الَّذِي أَحْيَانَا بَعْدَ مَا أَمَاتَنَا وَإِلَيْهِ النُّشُورُ",
+      urdu:"تمام تعریف اللہ کے لیے ہے جس نے ہمیں موت کے بعد زندگی دی اور اسی کی طرف لوٹ کر جانا ہے۔"
+    },
+
+    {
+      title:"کھانے سے پہلے",
+      arabic:"بِسْمِ اللَّهِ",
+      urdu:"اللہ کے نام سے۔"
+    },
+
+    {
+      title:"کھانے کے بعد",
+      arabic:"الْحَمْدُ لِلَّهِ",
+      urdu:"تمام تعریف اللہ کے لیے ہے۔"
+    },
+
+    {
+      title:"والدین کے لیے دعا",
+      arabic:"رَبِّ ارْحَمْهُمَا كَمَا رَبَّيَانِي صَغِيرًا",
+      urdu:"اے میرے رب! ان دونوں پر رحم فرما جیسے انہوں نے بچپن میں مجھے پالا۔"
+    },
+
+    {
+      title:"دنیا و آخرت کی بھلائی",
+      arabic:"رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ",
+      urdu:"اے ہمارے رب! ہمیں دنیا میں بھلائی عطا فرما اور آخرت میں بھی بھلائی عطا فرما اور ہمیں آگ کے عذاب سے بچا۔"
+    }
+
+  ];
+
+
+  window.openDuas = function () {
+
+    openExtraScreen("duasScreen");
+
+    const box =
+      document.getElementById("duasScreenContent");
+
+    if (!box) return;
+
+    box.innerHTML = "";
+
+    duas.forEach(function(dua) {
+
+      const card =
+        document.createElement("div");
+
+      card.className =
+        "dua-card";
+
+      card.innerHTML = `
+
+        <h3>${escapeExtra(dua.title)}</h3>
+
+        <div class="dua-arabic">
+          ${escapeExtra(dua.arabic)}
+        </div>
+
+        <div class="dua-urdu">
+          ${escapeExtra(dua.urdu)}
+        </div>
+
+        <button
+          class="feature-button"
+          type="button"
+          onclick="speakArabic(this.dataset.text)"
+          data-text="${escapeAttribute(dua.arabic)}">
+
+          🔊 دعا سنیں
+
+        </button>
+
+      `;
+
+      box.appendChild(card);
+    });
+  };
+
+
+  /* =========================================================
+     TEXT TO SPEECH
+  ========================================================= */
+
+  window.speakArabic = function(text) {
+
+    if (!("speechSynthesis" in window)) {
+
+      alert(
+        "آپ کے Chromebook کے browser میں Text-to-Speech دستیاب نہیں۔"
+      );
+
+      return;
+    }
+
+    speechSynthesis.cancel();
+
+    const speech =
+      new SpeechSynthesisUtterance(text);
+
+    speech.lang = "ar-SA";
+
+    speech.rate = 0.8;
+
+    speech.pitch = 1;
+
+    speechSynthesis.speak(speech);
+  };
+
+
+  /* =========================================================
+     TASBEEH
+  ========================================================= */
+
+  let tasbeehCount =
+    Number(
+      localStorage.getItem(
+        "tasbeehCount"
+      ) || 0
+    );
+
+  window.openTasbeeh = function () {
+
+    openExtraScreen("tasbeehScreen");
+
+    renderTasbeeh();
+  };
+
+
+  function renderTasbeeh() {
+
+    const box =
+      document.getElementById(
+        "tasbeehScreenContent"
+      );
+
+    if (!box) return;
+
+    box.innerHTML = `
+
+      <div class="feature-card">
+
+        <h2 style="text-align:center">
+          📿 تسبیح
+        </h2>
+
+        <div class="zikr-text">
+          سُبْحَانَ اللّٰهِ
+        </div>
+
+        <div
+          class="tasbeeh-big"
+          id="tasbeehNumber">
+          ${tasbeehCount}
+        </div>
+
+        <button
+          class="feature-button primary"
+          type="button"
+          onclick="countTasbeeh()">
+
+          📿 ذکر کریں
+
+        </button>
+
+        <button
+          class="feature-button"
+          type="button"
+          onclick="resetTasbeeh()">
+
+          🔄 ری سیٹ
+
+        </button>
+
+      </div>
+
+      <div class="feature-card">
+
+        <h3>اذکار</h3>
+
+        <p>
+          سُبْحَانَ اللّٰهِ
+        </p>
+
+        <p>
+          الْحَمْدُ لِلّٰهِ
+        </p>
+
+        <p>
+          اللّٰهُ أَكْبَرُ
+        </p>
+
+        <p>
+          لَا إِلٰهَ إِلَّا اللّٰهُ
+        </p>
+
+      </div>
+    `;
+  }
+
+
+  window.countTasbeeh = function () {
+
+    tasbeehCount++;
+
+    localStorage.setItem(
+      "tasbeehCount",
+      String(tasbeehCount)
+    );
+
+    const number =
+      document.getElementById(
+        "tasbeehNumber"
+      );
+
+    if (number) {
+      number.textContent =
+        tasbeehCount;
+    }
+  };
+
+
+  window.resetTasbeeh = function () {
+
+    tasbeehCount = 0;
+
+    localStorage.setItem(
+      "tasbeehCount",
+      "0"
+    );
+
+    renderTasbeeh();
+  };
+
+
+  /* =========================================================
+     UNIVERSE
+  ========================================================= */
+
+  window.openUniverse = function () {
+
+    openExtraScreen("universeScreen");
+
+    const box =
+      document.getElementById(
+        "universeScreenContent"
+      );
+
+    if (!box) return;
+
+    box.innerHTML = `
+
+      <div class="feature-card">
+
+        <h2>🌌 کائنات</h2>
+
+        <p class="info-list">
+          قرآن مجید انسان کو آسمانوں، زمین، سورج، چاند،
+          ستاروں اور اللہ تعالیٰ کی قدرت میں غور و فکر کی دعوت دیتا ہے۔
+        </p>
+
+      </div>
+
+      <div class="feature-grid">
+
+        <div class="feature-card">
+          <h3>☀️ سورج</h3>
+          <p>سورج زمین پر روشنی اور حرارت کا بنیادی ذریعہ ہے۔</p>
+        </div>
+
+        <div class="feature-card">
+          <h3>🌙 چاند</h3>
+          <p>چاند کی منزلیں اسلامی مہینوں کے تعین میں اہم ہیں۔</p>
+        </div>
+
+        <div class="feature-card">
+          <h3>⭐ ستارے</h3>
+          <p>قرآن میں آسمان کی نشانیوں اور ستاروں کا ذکر ملتا ہے۔</p>
+        </div>
+
+        <div class="feature-card">
+          <h3>🌍 زمین</h3>
+          <p>زمین اللہ تعالیٰ کی عظیم نشانیوں میں سے ایک ہے۔</p>
+        </div>
+
+      </div>
+    `;
+  };
+
+
+  /* =========================================================
+     CREATURES
+  ========================================================= */
+
+  window.openCreatures = function () {
+
+    openExtraScreen("creaturesScreen");
+
+    const box =
+      document.getElementById(
+        "creaturesScreenContent"
+      );
+
+    if (!box) return;
+
+    box.innerHTML = `
+
+      <div class="feature-card">
+
+        <h2>🐾 جاندار</h2>
+
+        <p class="info-list">
+          قرآن مجید میں مختلف جانداروں کا ذکر آیا ہے۔
+          ان واقعات میں انسان کے لیے نصیحت اور غور و فکر کے پہلو موجود ہیں۔
+        </p>
+
+      </div>
+
+      <div class="feature-grid">
+
+        <div class="feature-card">
+          <h3>🐜 چیونٹی</h3>
+          <p>
+            حضرت سلیمان علیہ السلام کے واقعے میں چیونٹیوں کا ذکر آتا ہے۔
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <h3>🐝 شہد کی مکھی</h3>
+          <p>
+            سورۃ النحل میں شہد کی مکھی اور اس سے حاصل ہونے والی شہد کا ذکر ہے۔
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <h3>🐦 پرندے</h3>
+          <p>
+            حضرت سلیمان علیہ السلام کے واقعے میں پرندوں کا ذکر ملتا ہے۔
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <h3>🐪 اونٹ</h3>
+          <p>
+            قرآن میں اونٹ کی تخلیق اور اس میں غور و فکر کی طرف توجہ دلائی گئی ہے۔
+          </p>
+        </div>
+
+      </div>
+    `;
+  };
+
+
+  /* =========================================================
+     HISTORY / ISLAMIC INFO
+  ========================================================= */
+
+  window.openHistory = function () {
+
+    openExtraScreen("historyScreen");
+
+    const box =
+      document.getElementById(
+        "historyScreenContent"
+      );
+
+    if (!box) return;
+
+    box.innerHTML = `
+
+      <div class="feature-card">
+
+        <h2>📚 اسلامی معلومات</h2>
+
+        <div class="info-list">
+
+          <p>
+            <strong>قرآن:</strong>
+            قرآن مجید اللہ تعالیٰ کی آخری کتاب ہے۔
+          </p>
+
+          <p>
+            <strong>سورتیں:</strong>
+            قرآن مجید میں 114 سورتیں ہیں۔
+          </p>
+
+          <p>
+            <strong>نماز:</strong>
+            نماز مسلمان کی اہم عبادت ہے۔
+          </p>
+
+          <p>
+            <strong>قبلہ:</strong>
+            مسلمانوں کا قبلہ خانہ کعبہ ہے۔
+          </p>
+
+        </div>
+
+      </div>
+    `;
+  };
+
+
+  /* =========================================================
+     AI SCREEN
+  ========================================================= */
+
+  window.openAI = function () {
+
+    openExtraScreen("aiScreen");
+
+    const box =
+      document.getElementById(
+        "aiScreenContent"
+      );
+
+    if (!box) return;
+
+    box.innerHTML = `
+
+      <div class="feature-card">
+
+        <h2>🤖 Quran Companion</h2>
+
+        <p class="info-list">
+          یہ حصہ مستقبل میں قرآن سے متعلق سوالات،
+          تلاش، موضوعات اور وضاحت کے لیے استعمال کیا جا سکتا ہے۔
+        </p>
+
+        <p>
+          فی الحال قرآن، ترجمہ، تفسیر، تلاوت، دعائیں
+          اور تسبیح استعمال کریں۔
+        </p>
+
+      </div>
+    `;
+  };
+
+
+  /* =========================================================
+     EXTRA ESCAPE FUNCTIONS
+  ========================================================= */
+
+  function escapeExtra(value) {
+
+    return String(value ?? "")
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;")
+      .replaceAll("'","&#039;");
+  }
+
+
+  function escapeAttribute(value) {
+
+    return String(value ?? "")
+      .replaceAll("&","&amp;")
+      .replaceAll('"',"&quot;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;");
+  }
+
+
+  /* =========================================================
+     FIX HOME MENU IF OLD BUTTONS EXIST
+  ========================================================= */
+
+  function addExtraHomeButtons() {
+
+    const home =
+      document.getElementById(
+        "homeScreen"
+      );
+
+    if (!home) return;
+
+    if (
+      document.getElementById(
+        "extraHomeFeatures"
+      )
+    ) {
+      return;
+    }
+
+    const grid =
+      home.querySelector(".grid");
+
+    if (!grid) return;
+
+    const wrapper =
+      document.createElement("div");
+
+    wrapper.id =
+      "extraHomeFeatures";
+
+    wrapper.style.marginTop =
+      "12px";
+
+    wrapper.innerHTML = `
+
+      <div class="feature-card">
+
+        <h3 style="text-align:center">
+          مزید اسلامی سہولیات
+        </h3>
+
+        <div class="grid">
+
+          <button
+            class="menu-btn"
+            type="button"
+            onclick="openPrayer()">
+
+            <span>🕌</span>
+            نماز
+
+          </button>
+
+          <button
+            class="menu-btn"
+            type="button"
+            onclick="openKaaba()">
+
+            <span>🕋</span>
+            خانہ کعبہ
+
+          </button>
+
+          <button
+            class="menu-btn"
+            type="button"
+            onclick="openUniverse()">
+
+            <span>🌌</span>
+            کائنات
+
+          </button>
+
+          <button
+            class="menu-btn"
+            type="button"
+            onclick="openCreatures()">
+
+            <span>🐾</span>
+            جاندار
+
+          </button>
+
+          <button
+            class="menu-btn"
+            type="button"
+            onclick="openHistory()">
+
+            <span>📚</span>
+            اسلامی معلومات
+
+          </button>
+
+          <button
+            class="menu-btn"
+            type="button"
+            onclick="openAI()">
+
+            <span>🤖</span>
+            Companion
+
+          </button>
+
+        </div>
+
+      </div>
+
+    `;
+
+    home.appendChild(wrapper);
+  }
+
+
+  /* =========================================================
+     PATCH EXISTING TASBEEH BUTTON
+  ========================================================= */
+
+  function patchExistingButtons() {
+
+    document
+      .querySelectorAll(
+        '[onclick="openPrayer()"]'
+      )
+      .forEach(function(button) {
+
+        button.onclick =
+          function() {
+            openPrayer();
+          };
+
+      });
+
+    document
+      .querySelectorAll(
+        '[onclick="openKaaba()"]'
+      )
+      .forEach(function(button) {
+
+        button.onclick =
+          function() {
+            openKaaba();
+          };
+
+      });
+
+    document
+      .querySelectorAll(
+        '[onclick="openDuas()"]'
+      )
+      .forEach(function(button) {
+
+        button.onclick =
+          function() {
+            openDuas();
+          };
+
+      });
+
+    document
+      .querySelectorAll(
+        '[onclick="openTasbeeh()"]'
+      )
+      .forEach(function(button) {
+
+        button.onclick =
+          function() {
+            openTasbeeh();
+          };
+
+      });
+
+  }
+
+
+  /* =========================================================
+     START EXTRA FEATURES
+  ========================================================= */
+
+  function startExtraFeatures() {
+
+    addExtraHomeButtons();
+
+    patchExistingButtons();
+
+    console.log(
+      "All extra Quran Companion features ready"
+    );
+  }
+
+
+  if (
+    document.readyState === "loading"
+  ) {
+
+    document.addEventListener(
+      "DOMContentLoaded",
+      startExtraFeatures
+    );
+
+  } else {
+
+    startExtraFeatures();
+
+  }
+
+})();
