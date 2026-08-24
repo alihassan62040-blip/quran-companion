@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#071b14">
+
+<link rel="manifest" href="./manifest.json">
+
 <title>Quran Companion</title>
 
 <style>
@@ -467,7 +470,6 @@ main{
  </div>
 </section>
 
-
 <section id="quran" class="hidden">
 
  <div class="card">
@@ -483,7 +485,6 @@ main{
  </div>
 
 </section>
-
 
 <section id="reader" class="hidden">
 
@@ -522,7 +523,6 @@ main{
 
 </section>
 
-
 <section id="duas" class="hidden">
 
  <div class="card">
@@ -532,7 +532,6 @@ main{
  <div id="duasList"></div>
 
 </section>
-
 
 <section id="tasbeeh" class="hidden">
 
@@ -554,7 +553,6 @@ main{
 
 </section>
 
-
 <section id="prayer" class="hidden">
 
  <div class="card">
@@ -570,7 +568,6 @@ main{
  </div>
 
 </section>
-
 
 <section id="qibla" class="hidden">
 
@@ -598,7 +595,6 @@ main{
 
 </section>
 
-
 <section id="kaaba" class="hidden">
 
  <div class="card">
@@ -620,7 +616,6 @@ main{
  </div>
 
 </section>
-
 
 <section id="about" class="hidden">
 
@@ -644,60 +639,7 @@ main{
 
 </main>
 
-
 <div id="audioPlayer" class="audio hidden">
 
- <div id="audioTitle" class="audio-title">
-  آیت
- </div>
-
- <div class="audio-buttons">
-  <button onclick="previousAudio()">⏮</button>
-  <button id="mainPlay" onclick="toggleMainAudio()">▶️</button>
-  <button onclick="nextAudio()">⏭</button>
- </div>
-
- <input id="audioProgress"
-  class="progress"
-  type="range"
-  min="0"
-  max="100"
-  value="0"
-  oninput="seekAudio(this.value)">
-
- <div class="times">
-  <span id="totalTime">0:00</span>
-  <span id="currentTime">0:00</span>
- </div>
-
-</div>
-
-
-<nav class="bottom">
-
- <button onclick="goHome()">
-  <span>⌂</span>
-  <small>ہوم</small>
- </button>
-
- <button onclick="openQuran()">
-  <span>📖</span>
-  <small>قرآن</small>
- </button>
-
- <button onclick="openDuas()">
-  <span>🤲</span>
-  <small>دعائیں</small>
- </button>
-
- <button onclick="openTasbeeh()">
-  <span>📿</span>
-  <small>ذکر</small>
- </button>
-
-</nav>
-
-<script src="./script.js"></script>
-
-</body>
-</html>
+ <div id="audioTitle" class="audio-title
+ 
