@@ -1,84 +1,30 @@
-"use strict";
+const CACHE_NAME = "quran-companion-v1";
+const SHELL_FILES = ["./index.html", "./app.js", "./style.css", "./manifest.json", "./launchericon-512x512.png"];
 
-const CACHE_NAME = "quran-companion-v2";
-
-const APP_FILES = [
-  "./",
-  "./index.html",
-  "./style.css",
-  "./script.js",
-  "./manifest.json"
-];
-
-self.addEventListener("install", function(event) {
+self.addEventListener("install", (e) => {
+  e.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(SHELL_FILES))
+  );
   self.skipWaiting();
-
-  event.waitUntil(
-    caches.open(CACHE_NAME).then(function(cache) {
-      return cache.addAll(APP_FILES);
-    })
-  );
 });
 
-self.addEventListener("activate", function(event) {
-  event.waitUntil(
-    caches.keys().then(function(names) {
-      return Promise.all(
-        names.map(function(name) {
-          return caches.delete(name);
-        })
-      );
-    }).then(function() {
-      return self.clients.claim();
-    })
+self.addEventListener("activate", (e) => {
+  e.waitUntil(
+    caches.keys().then((keys) =>
+      Promise.all(keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k)))
+    )
   );
+  self.clients.claim();
 });
 
-self.addEventListener("fetch", function(event) {
-  if (event.request.method !== "GET") {
-    return;
+// App shell: cache-first. Everything else (APIs, audio): network-first, no forced caching.
+self.addEventListener("fetch", (e) => {
+  const url = new URL(e.request.url);
+  const isShell = SHELL_FILES.some((f) => url.pathname.endsWith(f.replace("./", "")));
+  if (isShell) {
+    e.respondWith(
+      caches.match(e.request).then((cached) => cached || fetch(e.request))
+    );
   }
-
-  /*
-    API requests ko cache nahi karna.
-    Quran, Urdu, Tafseer aur audio fresh
-    server se aayenge.
-  */
-  const url = new URL(event.request.url);
-
-  if (
-    url.hostname.includes("supabase.co") ||
-    url.hostname.includes("alquran.cloud") ||
-    url.hostname.includes("quran.com") ||
-    url.hostname.includes("islamic.network")
-  ) {
-    event.respondWith(fetch(event.request));
-    return;
-  }
-
-  /*
-    App files ke liye network first.
-    Agar internet na ho to cached version.
-  */
-  event.respondWith(
-    fetch(event.request)
-      .then(function(response) {
-        if (
-          response &&
-          response.status === 200 &&
-          response.type === "basic"
-        ) {
-          const copy = response.clone();
-
-          caches.open(CACHE_NAME).then(function(cache) {
-            cache.put(event.request, copy);
-          });
-        }
-
-        return response;
-      })
-      .catch(function() {
-        return caches.match(event.request);
-      })
-  );
+  // else: let it hit the network normally (dynamic Quran/Hadith/prayer data)
 });
