@@ -1,5 +1,5 @@
 const CACHE_NAME = "quran-companion-v1";
-const SHELL_FILES = ["./index.html", "./app.js", "./style.css", "./manifest.json", "./launchericon-512x512.png"];
+const SHELL_FILES = ["./index.html", "./script.js", "./style.css", "./manifest.json", "./launchericon-512x512.png"];
 
 self.addEventListener("install", (e) => {
   e.waitUntil(
