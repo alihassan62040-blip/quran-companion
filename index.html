@@ -4,132 +4,405 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0b1912">
+
 <link rel="manifest" href="./manifest.json">
 <link rel="icon" href="./launchericon-512x512.png">
 <link rel="apple-touch-icon" href="./launchericon-512x512.png">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Scheherazade+New:wght@400;700&family=Lateef&display=swap" rel="stylesheet">
+
 <link rel="stylesheet" href="./style.css">
+
 <title>Quran Companion</title>
+
+<!-- ===================== GOOGLE ANALYTICS ===================== -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-2N96YJ324P"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+
+  function gtag() {
+    dataLayer.push(arguments);
+  }
+
+  gtag('js', new Date());
+
+  gtag('config', 'G-2N96YJ324P', {
+    send_page_view: true
+  });
+</script>
+<!-- ============================================================ -->
+
 </head>
+
 <body>
 
 <header>
   <div class="header">
     <button class="btn" onclick="goHome()">⌂</button>
+
     <h2 id="headerTitle">قرآن کریم</h2>
+
     <button class="btn" onclick="toggleTheme()" id="themeBtn">🌙</button>
   </div>
 </header>
 
 <main>
 
+<!-- ===================== HOME ===================== -->
 <section id="home">
+
   <div class="home">
     <div class="home-icon">📖</div>
+
     <h1>قرآن کریم</h1>
+
     <p>عربی متن، اردو ترجمہ، تفسیر اور تلاوت</p>
   </div>
+
   <div class="grid">
-    <button class="menu" onclick="openQuran()"><span>📖</span>سورتیں</button>
-    <button class="menu" onclick="continueReading()"><span>▶️</span>جاری رکھیں</button>
-    <button class="menu" onclick="openJuzList()"><span>🔖</span>پارہ (جز)</button>
-    <button class="menu" onclick="openBookmarks()"><span>⭐</span>محفوظ شدہ</button>
-    <button class="menu" onclick="openPrayer()"><span>🕌</span>نماز کے اوقات</button>
-    <button class="menu" onclick="openQibla()"><span>🧭</span>قبلہ</button>
+
+    <button class="menu" onclick="openQuran()">
+      <span>📖</span>
+      سورتیں
+    </button>
+
+    <button class="menu" onclick="continueReading()">
+      <span>▶️</span>
+      جاری رکھیں
+    </button>
+
+    <button class="menu" onclick="openJuzList()">
+      <span>🔖</span>
+      پارہ (جز)
+    </button>
+
+    <button class="menu" onclick="openBookmarks()">
+      <span>⭐</span>
+      محفوظ شدہ
+    </button>
+
+    <button class="menu" onclick="openPrayer()">
+      <span>🕌</span>
+      نماز کے اوقات
+    </button>
+
+    <button class="menu" onclick="openQibla()">
+      <span>🧭</span>
+      قبلہ
+    </button>
+
   </div>
+
 </section>
 
+
+<!-- ===================== QURAN ===================== -->
 <section id="quran" class="hidden">
+
   <div class="card">
-    <div class="search"><input id="surahSearch" placeholder="سورت تلاش کریں، یا آیت نمبر جیسے 2:255" oninput="filterSurahs()" onkeydown="if(event.key==='Enter')trySearchAyah()"></div>
-    <div class="note">آیت پر جانے کے لیے: سورہ نمبر:آیت نمبر لکھیں، مثلاً 2:255</div>
+
+    <div class="search">
+      <input
+        id="surahSearch"
+        placeholder="سورت تلاش کریں، یا آیت نمبر جیسے 2:255"
+        oninput="filterSurahs()"
+        onkeydown="if(event.key==='Enter')trySearchAyah()"
+      >
+    </div>
+
+    <div class="note">
+      آیت پر جانے کے لیے: سورہ نمبر:آیت نمبر لکھیں، مثلاً 2:255
+    </div>
+
   </div>
-  <div id="surahList"><div class="loading">سورتیں لوڈ ہو رہی ہیں...</div></div>
+
+  <div id="surahList">
+    <div class="loading">سورتیں لوڈ ہو رہی ہیں...</div>
+  </div>
+
 </section>
 
+
+<!-- ===================== JUZ ===================== -->
 <section id="juzList" class="hidden">
-  <div class="card"><h2>🔖 پارہ (جز) منتخب کریں</h2></div>
-  <div id="juzGrid" class="juz-grid"></div>
-</section>
 
-<section id="bookmarksSection" class="hidden">
-  <div class="card"><h2>⭐ محفوظ شدہ مقامات</h2></div>
-  <div id="bookmarksList"></div>
-</section>
-
-<section id="reader" class="hidden">
-  <div class="reader-top">
-    <button class="btn" onclick="backToSurahs()">← واپس</button>
-    <h2 id="readerTitle">قرآن</h2>
-    <button class="btn" onclick="toggleSettings()">⚙️</button>
-  </div>
-  <div id="settings" class="settings hidden">
-    <label>عربی فونٹ سائز
-      <input id="fontSize" type="range" min="24" max="54" value="36" oninput="changeArabicSize(this.value)">
-    </label>
-    <label>عربی فونٹ اسٹائل
-      <select id="fontFamilySelect" onchange="changeFontFamily(this.value)">
-        <option value="'Amiri',serif">امیری (Amiri)</option>
-        <option value="'Scheherazade New',serif">شہرزاد (Scheherazade)</option>
-        <option value="'Lateef',serif">لطیف (Lateef)</option>
-      </select>
-    </label>
-    <label>ترجمہ
-      <select id="translationSelect" onchange="changeTranslation(this.value)">
-        <option value="ur.jalandhry">اردو — جالندھری</option>
-        <option value="ur.maududi">اردو — مودودی</option>
-        <option value="en.sahih">English — Sahih International</option>
-      </select>
-    </label>
-    <label>قاری
-      <select id="reciterSelect" onchange="changeReciter(this.value)">
-        <option value="ar.alafasy">مشاری العفاسی</option>
-        <option value="ar.abdulbasitmurattal">عبدالباسط</option>
-        <option value="ar.husary">الحصری</option>
-      </select>
-    </label>
-  </div>
-  <button class="tafseer-btn" id="fullSurahBtn" onclick="playFullSurah()">🎧 پوری سورت مسلسل سنیں</button>
-  <div id="ayahContainer"><div class="loading">قرآن لوڈ ہو رہا ہے...</div></div>
-</section>
-
-<section id="prayer" class="hidden">
   <div class="card">
-    <h2>🕌 نماز کے اوقات</h2>
-    <button class="primary" onclick="loadPrayerTimes()">میرے مقام کے مطابق اوقات حاصل کریں</button>
-    <div id="prayerList" style="margin-top:15px">مقام کی اجازت دے کر اوقات حاصل کریں۔</div>
+    <h2>🔖 پارہ (جز) منتخب کریں</h2>
   </div>
+
+  <div id="juzGrid" class="juz-grid"></div>
+
 </section>
 
-<section id="qibla" class="hidden">
-  <div class="card qibla">
-    <h2>🧭 قبلہ کی سمت</h2>
-    <p class="info">اپنے موجودہ مقام کی اجازت دیں تاکہ خانہ کعبہ کی سمت معلوم ہو سکے۔</p>
-    <button class="primary" onclick="findQibla()">📍 قبلہ معلوم کریں</button>
-    <div id="compass" class="compass">🕋</div>
-    <div id="qiblaText">ابھی سمت معلوم نہیں ہوئی۔</div>
+
+<!-- ===================== BOOKMARKS ===================== -->
+<section id="bookmarksSection" class="hidden">
+
+  <div class="card">
+    <h2>⭐ محفوظ شدہ مقامات</h2>
   </div>
+
+  <div id="bookmarksList"></div>
+
+</section>
+
+
+<!-- ===================== READER ===================== -->
+<section id="reader" class="hidden">
+
+  <div class="reader-top">
+
+    <button class="btn" onclick="backToSurahs()">
+      ← واپس
+    </button>
+
+    <h2 id="readerTitle">قرآن</h2>
+
+    <button class="btn" onclick="toggleSettings()">
+      ⚙️
+    </button>
+
+  </div>
+
+
+  <!-- SETTINGS -->
+  <div id="settings" class="settings hidden">
+
+    <label>
+      عربی فونٹ سائز
+
+      <input
+        id="fontSize"
+        type="range"
+        min="24"
+        max="54"
+        value="36"
+        oninput="changeArabicSize(this.value)"
+      >
+    </label>
+
+
+    <label>
+      عربی فونٹ اسٹائل
+
+      <select
+        id="fontFamilySelect"
+        onchange="changeFontFamily(this.value)"
+      >
+
+        <option value="'Amiri',serif">
+          امیری (Amiri)
+        </option>
+
+        <option value="'Scheherazade New',serif">
+          شہرزاد (Scheherazade)
+        </option>
+
+        <option value="'Lateef',serif">
+          لطیف (Lateef)
+        </option>
+
+      </select>
+
+    </label>
+
+
+    <label>
+      ترجمہ
+
+      <select
+        id="translationSelect"
+        onchange="changeTranslation(this.value)"
+      >
+
+        <option value="ur.jalandhry">
+          اردو — جالندھری
+        </option>
+
+        <option value="ur.maududi">
+          اردو — مودودی
+        </option>
+
+        <option value="en.sahih">
+          English — Sahih International
+        </option>
+
+      </select>
+
+    </label>
+
+
+    <label>
+      قاری
+
+      <select
+        id="reciterSelect"
+        onchange="changeReciter(this.value)"
+      >
+
+        <option value="ar.alafasy">
+          مشاری العفاسی
+        </option>
+
+        <option value="ar.abdulbasitmurattal">
+          عبدالباسط
+        </option>
+
+        <option value="ar.husary">
+          الحصری
+        </option>
+
+      </select>
+
+    </label>
+
+  </div>
+
+
+  <button
+    class="tafseer-btn"
+    id="fullSurahBtn"
+    onclick="playFullSurah()"
+  >
+    🎧 پوری سورت مسلسل سنیں
+  </button>
+
+
+  <div id="ayahContainer">
+
+    <div class="loading">
+      قرآن لوڈ ہو رہا ہے...
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- ===================== PRAYER ===================== -->
+<section id="prayer" class="hidden">
+
+  <div class="card">
+
+    <h2>🕌 نماز کے اوقات</h2>
+
+    <button
+      class="primary"
+      onclick="loadPrayerTimes()"
+    >
+      میرے مقام کے مطابق اوقات حاصل کریں
+    </button>
+
+    <div
+      id="prayerList"
+      style="margin-top:15px"
+    >
+      مقام کی اجازت دے کر اوقات حاصل کریں۔
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- ===================== QIBLA ===================== -->
+<section id="qibla" class="hidden">
+
+  <div class="card qibla">
+
+    <h2>🧭 قبلہ کی سمت</h2>
+
+    <p class="info">
+      اپنے موجودہ مقام کی اجازت دیں تاکہ خانہ کعبہ کی سمت معلوم ہو سکے۔
+    </p>
+
+    <button
+      class="primary"
+      onclick="findQibla()"
+    >
+      📍 قبلہ معلوم کریں
+    </button>
+
+    <div id="compass" class="compass">
+      🕋
+    </div>
+
+    <div id="qiblaText">
+      ابھی سمت معلوم نہیں ہوئی۔
+    </div>
+
+  </div>
+
 </section>
 
 </main>
 
+
+<!-- ===================== AUDIO PLAYER ===================== -->
 <div id="audioPlayer" class="audio hidden">
-  <div id="audioTitle" class="audio-title">چل رہا ہے...</div>
-  <audio id="audioEl" style="display:none"></audio>
-  <input id="audioProgress" class="progress" type="range" min="0" max="100" value="0">
-  <div class="times"><span id="audioCur">0:00</span><span id="audioDur">0:00</span></div>
-  <div class="audio-buttons">
-    <button onclick="prevAyah()">⏮</button>
-    <button id="playPauseBtn" onclick="togglePlay()">⏸</button>
-    <button onclick="nextAyah()">⏭</button>
-    <button onclick="closeAudio()">✖</button>
+
+  <div id="audioTitle" class="audio-title">
+    چل رہا ہے...
   </div>
+
+  <audio
+    id="audioEl"
+    style="display:none"
+    preload="none"
+  ></audio>
+
+  <input
+    id="audioProgress"
+    class="progress"
+    type="range"
+    min="0"
+    max="100"
+    value="0"
+  >
+
+  <div class="times">
+
+    <span id="audioCur">
+      0:00
+    </span>
+
+    <span id="audioDur">
+      0:00
+    </span>
+
+  </div>
+
+  <div class="audio-buttons">
+
+    <button onclick="prevAyah()">⏮</button>
+
+    <button
+      id="playPauseBtn"
+      onclick="togglePlay()"
+    >
+      ⏸
+    </button>
+
+    <button onclick="nextAyah()">⏭</button>
+
+    <button onclick="closeAudio()">✖</button>
+
+  </div>
+
 </div>
 
-<div id="toast" class="message hidden"></div>
 
+<!-- ===================== TOAST ===================== -->
+<div
+  id="toast"
+  class="message hidden"
+></div>
+
+
+<!-- ===================== APP SCRIPT ===================== -->
 <script src="./script.js"></script>
+
 </body>
 </html>
