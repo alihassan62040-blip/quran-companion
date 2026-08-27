@@ -1,4 +1,4 @@
-const CACHE_NAME = "quran-companion-v1";
+const CACHE_NAME = "quran-companion-v3";
 const SHELL_FILES = ["./index.html", "./script.js", "./style.css", "./manifest.json", "./launchericon-512x512.png"];
 
 self.addEventListener("install", (e) => {
@@ -17,7 +17,6 @@ self.addEventListener("activate", (e) => {
   self.clients.claim();
 });
 
-// App shell: cache-first. Everything else (APIs, audio): network-first, no forced caching.
 self.addEventListener("fetch", (e) => {
   const url = new URL(e.request.url);
   const isShell = SHELL_FILES.some((f) => url.pathname.endsWith(f.replace("./", "")));
@@ -26,5 +25,4 @@ self.addEventListener("fetch", (e) => {
       caches.match(e.request).then((cached) => cached || fetch(e.request))
     );
   }
-  // else: let it hit the network normally (dynamic Quran/Hadith/prayer data)
 });
