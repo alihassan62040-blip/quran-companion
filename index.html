@@ -9,7 +9,7 @@
 <link rel="apple-touch-icon" href="./launchericon-512x512.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Scheherazade+New:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Scheherazade+New:wght@400;700&family=Lateef&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="./style.css">
 <title>Quran Companion</title>
 </head>
@@ -19,7 +19,7 @@
   <div class="header">
     <button class="btn" onclick="goHome()">⌂</button>
     <h2 id="headerTitle">قرآن کریم</h2>
-    <button class="btn" onclick="toggleSettings()">⚙️</button>
+    <button class="btn" onclick="toggleTheme()" id="themeBtn">🌙</button>
   </div>
 </header>
 
@@ -34,25 +34,47 @@
   <div class="grid">
     <button class="menu" onclick="openQuran()"><span>📖</span>سورتیں</button>
     <button class="menu" onclick="continueReading()"><span>▶️</span>جاری رکھیں</button>
+    <button class="menu" onclick="openJuzList()"><span>🔖</span>پارہ (جز)</button>
+    <button class="menu" onclick="openBookmarks()"><span>⭐</span>محفوظ شدہ</button>
+    <button class="menu" onclick="openPrayer()"><span>🕌</span>نماز کے اوقات</button>
+    <button class="menu" onclick="openQibla()"><span>🧭</span>قبلہ</button>
   </div>
 </section>
 
 <section id="quran" class="hidden">
   <div class="card">
-    <div class="search"><input id="surahSearch" placeholder="سورت تلاش کریں..." oninput="filterSurahs()"></div>
+    <div class="search"><input id="surahSearch" placeholder="سورت تلاش کریں، یا آیت نمبر جیسے 2:255" oninput="filterSurahs()" onkeydown="if(event.key==='Enter')trySearchAyah()"></div>
+    <div class="note">آیت پر جانے کے لیے: سورہ نمبر:آیت نمبر لکھیں، مثلاً 2:255</div>
   </div>
   <div id="surahList"><div class="loading">سورتیں لوڈ ہو رہی ہیں...</div></div>
 </section>
 
+<section id="juzList" class="hidden">
+  <div class="card"><h2>🔖 پارہ (جز) منتخب کریں</h2></div>
+  <div id="juzGrid" class="juz-grid"></div>
+</section>
+
+<section id="bookmarksSection" class="hidden">
+  <div class="card"><h2>⭐ محفوظ شدہ مقامات</h2></div>
+  <div id="bookmarksList"></div>
+</section>
+
 <section id="reader" class="hidden">
   <div class="reader-top">
-    <button class="btn" onclick="backToSurahs()">← سورتیں</button>
+    <button class="btn" onclick="backToSurahs()">← واپس</button>
     <h2 id="readerTitle">قرآن</h2>
     <button class="btn" onclick="toggleSettings()">⚙️</button>
   </div>
   <div id="settings" class="settings hidden">
     <label>عربی فونٹ سائز
       <input id="fontSize" type="range" min="24" max="54" value="36" oninput="changeArabicSize(this.value)">
+    </label>
+    <label>عربی فونٹ اسٹائل
+      <select id="fontFamilySelect" onchange="changeFontFamily(this.value)">
+        <option value="'Amiri',serif">امیری (Amiri)</option>
+        <option value="'Scheherazade New',serif">شہرزاد (Scheherazade)</option>
+        <option value="'Lateef',serif">لطیف (Lateef)</option>
+      </select>
     </label>
     <label>ترجمہ
       <select id="translationSelect" onchange="changeTranslation(this.value)">
@@ -69,7 +91,26 @@
       </select>
     </label>
   </div>
+  <button class="tafseer-btn" id="fullSurahBtn" onclick="playFullSurah()">🎧 پوری سورت مسلسل سنیں</button>
   <div id="ayahContainer"><div class="loading">قرآن لوڈ ہو رہا ہے...</div></div>
+</section>
+
+<section id="prayer" class="hidden">
+  <div class="card">
+    <h2>🕌 نماز کے اوقات</h2>
+    <button class="primary" onclick="loadPrayerTimes()">میرے مقام کے مطابق اوقات حاصل کریں</button>
+    <div id="prayerList" style="margin-top:15px">مقام کی اجازت دے کر اوقات حاصل کریں۔</div>
+  </div>
+</section>
+
+<section id="qibla" class="hidden">
+  <div class="card qibla">
+    <h2>🧭 قبلہ کی سمت</h2>
+    <p class="info">اپنے موجودہ مقام کی اجازت دیں تاکہ خانہ کعبہ کی سمت معلوم ہو سکے۔</p>
+    <button class="primary" onclick="findQibla()">📍 قبلہ معلوم کریں</button>
+    <div id="compass" class="compass">🕋</div>
+    <div id="qiblaText">ابھی سمت معلوم نہیں ہوئی۔</div>
+  </div>
 </section>
 
 </main>
