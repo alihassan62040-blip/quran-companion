@@ -1,177 +1,124 @@
+:root{
+  --bg1:#0b1912; --bg2:#0e2018; --bg3:#0a1610;
+  --text:#f4f1e8; --text-soft:#b7c7ba; --text-dim:#8fa596;
+  --card:#122a20; --card-border:#26493a;
+  --input-bg:#0d1f17;
+  --accent:#e3c073;
+  --btn-bg:#173a2b; --btn-border:#3a6a52;
+  --ayah-bg:#0e2119;
+  --translation-bg:#163329;
+  --tafseer-bg:#0d1f17;
+}
+body.light{
+  --bg1:#f6f2e7; --bg2:#eee7d4; --bg3:#f9f6ec;
+  --text:#20291f; --text-soft:#4a5a49; --text-dim:#5f6f5c;
+  --card:#fffdf7; --card-border:#d9cfa9;
+  --input-bg:#fffdf7;
+  --accent:#8a6a1e;
+  --btn-bg:#eee0bd; --btn-border:#c9b578;
+  --ayah-bg:#fffdf7;
+  --translation-bg:#f1e9d3;
+  --tafseer-bg:#f6f2e7;
+}
+
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html{height:100%}
 body{
-  margin:0;
-  min-height:100dvh;
-  background:linear-gradient(160deg,#0b1912 0%,#0e2018 45%,#0a1610 100%);
-  color:#f4f1e8;
+  margin:0;min-height:100dvh;
+  background:linear-gradient(160deg,var(--bg1) 0%,var(--bg2) 45%,var(--bg3) 100%);
+  color:var(--text);
   font-family:Arial,"Noto Nastaliq Urdu",sans-serif;
   overscroll-behavior-y:contain;
+  transition:background .3s,color .3s;
 }
 button,input,select{font:inherit}
 button{cursor:pointer;-webkit-tap-highlight-color:transparent}
-a{color:inherit}
 .hidden{display:none!important}
 
-header{
-  position:sticky;
-  top:0;
-  z-index:50;
-  background:#0e2018;
-  border-bottom:1px solid #2a4a3a;
-  padding-top:env(safe-area-inset-top);
-}
+header{position:sticky;top:0;z-index:50;background:var(--bg2);border-bottom:1px solid var(--card-border);padding-top:env(safe-area-inset-top)}
 .header{max-width:900px;margin:auto;padding:16px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px}
-.header h2{margin:0;font-size:21px;color:#e3c073;font-weight:700}
-.btn{
-  background:#173a2b;
-  color:#f4f1e8;
-  border:1px solid #3a6a52;
-  border-radius:13px;
-  padding:11px 15px;
-  font-size:18px;
-  min-width:46px;
-  min-height:46px;
-}
+.header h2{margin:0;font-size:21px;color:var(--accent);font-weight:700}
+.btn{background:var(--btn-bg);color:var(--text);border:1px solid var(--btn-border);border-radius:13px;padding:11px 15px;font-size:18px;min-width:46px;min-height:46px}
 
 main{max-width:900px;margin:auto;padding:16px;padding-bottom:120px}
-
-.card{background:#122a20;border:1px solid #26493a;border-radius:20px;padding:18px;margin-bottom:14px}
+.card{background:var(--card);border:1px solid var(--card-border);border-radius:20px;padding:18px;margin-bottom:14px}
 
 .home{text-align:center;padding:38px 12px 26px}
 .home-icon{font-size:78px;line-height:1}
-.home h1{font-size:34px;margin:14px 0 6px;color:#e3c073;font-weight:800}
-.home p{color:#b7c7ba;font-size:16px}
+.home h1{font-size:34px;margin:14px 0 6px;color:var(--accent);font-weight:800}
+.home p{color:var(--text-soft);font-size:16px}
 
 .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
-.menu{
-  min-height:130px;
-  border:1px solid #2f5a45;
-  background:#122a20;
-  color:#f4f1e8;
-  border-radius:22px;
-  padding:16px;
-  font-size:17px;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  gap:8px;
-}
-.menu:active{background:#183526}
-.menu span{display:block;font-size:46px;line-height:1}
+.menu{min-height:120px;border:1px solid var(--card-border);background:var(--card);color:var(--text);border-radius:22px;padding:16px;font-size:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px}
+.menu span{display:block;font-size:42px;line-height:1}
 
-.search input{
-  width:100%;
-  padding:16px;
-  border-radius:14px;
-  border:1px solid #3a6a52;
-  background:#0d1f17;
-  color:#f4f1e8;
-  outline:none;
-  font-size:16px;
-}
+.search input{width:100%;padding:16px;border-radius:14px;border:1px solid var(--btn-border);background:var(--input-bg);color:var(--text);outline:none;font-size:16px}
 
 .surah-list{display:flex;flex-direction:column;gap:10px}
-.surah{
-  width:100%;
-  display:flex;
-  align-items:center;
-  gap:14px;
-  text-align:right;
-  background:#122a20;
-  color:#f4f1e8;
-  border:1px solid #26493a;
-  border-radius:17px;
-  padding:15px;
-  min-height:70px;
-}
-.surah-number{
-  min-width:46px;
-  height:46px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  border-radius:50%;
-  background:#1e4534;
-  color:#e3c073;
-  font-size:17px;
-  font-weight:700;
-  flex-shrink:0;
-}
+.surah{width:100%;display:flex;align-items:center;gap:14px;text-align:right;background:var(--card);color:var(--text);border:1px solid var(--card-border);border-radius:17px;padding:15px;min-height:70px}
+.surah-number{min-width:46px;height:46px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:var(--btn-bg);color:var(--accent);font-size:17px;font-weight:700;flex-shrink:0}
 .surah-name{flex:1}
 .surah-name strong{display:block;font-size:19px}
-.surah-name small{display:block;color:#9ab0a1;margin-top:5px;font-size:14px}
+.surah-name small{display:block;color:var(--text-dim);margin-top:5px;font-size:14px}
 
-.loading{text-align:center;padding:34px;color:#b7c7ba;font-size:16px}
+.juz-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.juz-item{background:var(--card);border:1px solid var(--card-border);border-radius:15px;padding:16px 8px;color:var(--text);text-align:center;font-size:16px;font-weight:700}
+.juz-item small{display:block;color:var(--text-dim);font-weight:400;font-size:12px;margin-top:4px}
+
+.loading{text-align:center;padding:34px;color:var(--text-soft);font-size:16px}
 
 .reader-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:14px}
-.reader-top h2{margin:0;color:#e3c073;font-size:19px}
+.reader-top h2{margin:0;color:var(--accent);font-size:19px}
 
-.settings{background:#122a20;border:1px solid #26493a;border-radius:18px;padding:17px;margin-bottom:16px}
+.settings{background:var(--card);border:1px solid var(--card-border);border-radius:18px;padding:17px;margin-bottom:16px}
 .settings label{display:block;margin-bottom:16px;font-size:15px}
-.settings input,.settings select{width:100%;margin-top:9px;padding:10px;border-radius:10px;border:1px solid #3a6a52;background:#0d1f17;color:#f4f1e8}
+.settings input,.settings select{width:100%;margin-top:9px;padding:10px;border-radius:10px;border:1px solid var(--btn-border);background:var(--input-bg);color:var(--text)}
 
-.ayah{background:#0e2119;border:1px solid #26493a;border-radius:20px;padding:22px 18px;margin-bottom:16px}
-.ayah.current{border-color:#e3c073;box-shadow:0 0 0 2px #e3c07344}
-
+.ayah{background:var(--ayah-bg);border:1px solid var(--card-border);border-radius:20px;padding:22px 18px;margin-bottom:16px}
+.ayah.current{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
 .ayah-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;gap:8px}
-.ayah-number{
-  width:42px;height:42px;border-radius:50%;
-  background:#1e4534;color:#e3c073;font-weight:700;
-  display:flex;align-items:center;justify-content:center;flex-shrink:0;
-}
+.ayah-number{width:42px;height:42px;border-radius:50%;background:var(--btn-bg);color:var(--accent);font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .ayah-actions{display:flex;gap:8px}
-.icon-btn{
-  background:#173a2b;color:#f4f1e8;border:1px solid #3a6a52;
-  border-radius:11px;padding:10px 13px;font-size:18px;min-width:46px;min-height:46px;
-}
+.icon-btn{background:var(--btn-bg);color:var(--text);border:1px solid var(--btn-border);border-radius:11px;padding:10px 13px;font-size:18px;min-width:46px;min-height:46px}
+.icon-btn.saved{color:var(--accent);border-color:var(--accent)}
 
-.arabic{
-  font-size:36px;
-  line-height:2.5;
-  text-align:right;
-  margin-bottom:20px;
-  color:#faf7ec;
-  font-family:"Amiri","Scheherazade New","Noto Naskh Arabic",serif;
-  unicode-bidi:isolate;
-  direction:rtl;
-  word-spacing:2px;
-}
+.arabic{font-size:36px;line-height:2.5;text-align:right;margin-bottom:20px;color:var(--text);font-family:"Amiri","Scheherazade New",serif;unicode-bidi:isolate;direction:rtl;word-spacing:2px}
 
-.translation{background:#163329;border-radius:15px;padding:16px;line-height:2.1;color:#d7e2d9;font-size:16px}
-.translation-title{color:#e3c073;font-weight:bold;margin-bottom:6px;font-size:14px}
+.translation{background:var(--translation-bg);border-radius:15px;padding:16px;line-height:2.1;color:var(--text-soft);font-size:16px}
+.translation-title{color:var(--accent);font-weight:bold;margin-bottom:6px;font-size:14px}
 
-.tafseer-btn{width:100%;margin-top:12px;padding:14px;background:#173a2b;color:#f4f1e8;border:1px solid #3a6a52;border-radius:13px;font-size:15px}
-.tafseer{margin-top:12px;background:#0d1f17;border-radius:14px;padding:15px;line-height:2.1;color:#cbd8cd;font-size:15px}
+.tafseer-btn{width:100%;margin-top:12px;padding:14px;background:var(--btn-bg);color:var(--text);border:1px solid var(--btn-border);border-radius:13px;font-size:15px}
+.tafseer{margin-top:12px;background:var(--tafseer-bg);border-radius:14px;padding:15px;line-height:2.1;color:var(--text-soft);font-size:15px}
 
-.audio{
-  position:fixed;bottom:0;left:50%;transform:translateX(-50%);
-  width:min(880px,100%);z-index:40;background:#0e2018;
-  border:1px solid #3a6a52;border-radius:20px 20px 0 0;
-  padding:14px 14px calc(14px + env(safe-area-inset-bottom));
-  box-shadow:0 -10px 30px #0009;
-}
-.audio-title{text-align:center;margin-bottom:9px;color:#e3c073;font-size:15px}
+.audio{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(880px,100%);z-index:40;background:var(--bg2);border:1px solid var(--btn-border);border-radius:20px 20px 0 0;padding:14px 14px calc(14px + env(safe-area-inset-bottom));box-shadow:0 -10px 30px #0009}
+.audio-title{text-align:center;margin-bottom:9px;color:var(--accent);font-size:15px}
 .audio-buttons{display:flex;justify-content:center;gap:12px}
-.audio-buttons button{
-  background:#173a2b;color:#f4f1e8;border:1px solid #3a6a52;
-  border-radius:12px;padding:12px 17px;font-size:19px;min-width:52px;
-}
+.audio-buttons button{background:var(--btn-bg);color:var(--text);border:1px solid var(--btn-border);border-radius:12px;padding:12px 17px;font-size:19px;min-width:52px}
 .progress{width:100%;margin-top:10px}
-.times{display:flex;justify-content:space-between;direction:ltr;color:#8fa596;font-size:12px}
+.times{display:flex;justify-content:space-between;direction:ltr;color:var(--text-dim);font-size:12px}
 
-.message{
-  position:fixed;left:50%;bottom:100px;transform:translateX(-50%);
-  z-index:100;background:#173a2b;border:1px solid #3a6a52;
-  padding:13px 19px;border-radius:14px;color:#f4f1e8;font-size:15px;
-}
-.note{color:#8fa596;font-size:13px;line-height:1.8;margin-top:8px}
+.primary{width:100%;padding:16px;background:var(--accent);color:#1a1305;font-weight:700;border:0;border-radius:14px;font-size:16px}
+.prayer{display:flex;justify-content:space-between;padding:14px;border-bottom:1px solid var(--card-border);font-size:16px}
+.prayer:last-child{border-bottom:0}
+.prayer.active{background:var(--btn-bg);border-radius:12px}
+.info{line-height:2;color:var(--text-soft)}
+.qibla{text-align:center;padding:20px}
+.compass{width:190px;height:190px;border-radius:50%;border:5px solid var(--btn-border);margin:20px auto;display:flex;align-items:center;justify-content:center;font-size:90px;transition:transform .5s}
+
+.bookmark-card{display:flex;justify-content:space-between;align-items:center;gap:10px;background:var(--card);border:1px solid var(--card-border);border-radius:16px;padding:15px;margin-bottom:10px}
+.bookmark-info{flex:1;text-align:right}
+.bookmark-info strong{display:block;font-size:17px}
+.bookmark-info small{display:block;color:var(--text-dim);margin-top:4px}
+.bookmark-del{background:none;border:1px solid var(--btn-border);color:#d97a6c;border-radius:10px;padding:9px 12px;font-size:16px}
+
+.message{position:fixed;left:50%;bottom:100px;transform:translateX(-50%);z-index:100;background:var(--btn-bg);border:1px solid var(--btn-border);padding:13px 19px;border-radius:14px;color:var(--text);font-size:15px}
+.note{color:var(--text-dim);font-size:13px;line-height:1.8;margin-top:8px}
 
 @media(max-width:420px){
   .home-icon{font-size:64px}
   .home h1{font-size:28px}
-  .menu span{font-size:38px}
-  .menu{min-height:110px;font-size:16px}
+  .menu span{font-size:36px}
+  .menu{min-height:105px;font-size:15px}
   .arabic{font-size:30px}
+  .juz-grid{grid-template-columns:repeat(2,1fr)}
 }
