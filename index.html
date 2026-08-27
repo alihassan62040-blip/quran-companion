@@ -2,11 +2,14 @@
 <html lang="ur" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#071b14">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b1912">
 <link rel="manifest" href="./manifest.json">
 <link rel="icon" href="./launchericon-512x512.png">
 <link rel="apple-touch-icon" href="./launchericon-512x512.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Scheherazade+New:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="./style.css">
 <title>Quran Companion</title>
 </head>
@@ -15,7 +18,7 @@
 <header>
   <div class="header">
     <button class="btn" onclick="goHome()">⌂</button>
-    <h2 id="headerTitle">Quran Companion</h2>
+    <h2 id="headerTitle">قرآن کریم</h2>
     <button class="btn" onclick="toggleSettings()">⚙️</button>
   </div>
 </header>
@@ -25,20 +28,12 @@
 <section id="home">
   <div class="home">
     <div class="home-icon">📖</div>
-    <h1>Quran Companion</h1>
-    <p>قرآن، ترجمہ، تلاوت، تفسیر، حدیث، سیرت اور اسلامی معلومات</p>
+    <h1>قرآن کریم</h1>
+    <p>عربی متن، اردو ترجمہ، تفسیر اور تلاوت</p>
   </div>
   <div class="grid">
-    <button class="menu" onclick="openQuran()"><span>📖</span>قرآن</button>
+    <button class="menu" onclick="openQuran()"><span>📖</span>سورتیں</button>
     <button class="menu" onclick="continueReading()"><span>▶️</span>جاری رکھیں</button>
-    <button class="menu" onclick="openHadith()"><span>📗</span>حدیث</button>
-    <button class="menu" onclick="openSeerah()"><span>🌙</span>سیرت النبی ﷺ</button>
-    <button class="menu" onclick="openDuas()"><span>🤲</span>دعائیں</button>
-    <button class="menu" onclick="openTasbeeh()"><span>📿</span>تسبیح</button>
-    <button class="menu" onclick="openPrayer()"><span>🕌</span>نماز کے اوقات</button>
-    <button class="menu" onclick="openQibla()"><span>🧭</span>قبلہ</button>
-    <button class="menu" onclick="openKaaba()"><span>🕋</span>خانہ کعبہ</button>
-    <button class="menu" onclick="openAbout()"><span>ℹ️</span>اسلامی معلومات</button>
   </div>
 </section>
 
@@ -57,7 +52,7 @@
   </div>
   <div id="settings" class="settings hidden">
     <label>عربی فونٹ سائز
-      <input id="fontSize" type="range" min="22" max="50" value="32" oninput="changeArabicSize(this.value)">
+      <input id="fontSize" type="range" min="24" max="54" value="36" oninput="changeArabicSize(this.value)">
     </label>
     <label>ترجمہ
       <select id="translationSelect" onchange="changeTranslation(this.value)">
@@ -77,80 +72,6 @@
   <div id="ayahContainer"><div class="loading">قرآن لوڈ ہو رہا ہے...</div></div>
 </section>
 
-<section id="hadithBooks" class="hidden">
-  <div class="card"><h2>📗 کتب حدیث</h2><p class="info">کتاب منتخب کریں</p></div>
-  <div class="book-list" id="bookList"></div>
-</section>
-
-<section id="hadithReader" class="hidden">
-  <div class="reader-top">
-    <button class="btn" onclick="backToBooks()">← کتب</button>
-    <h2 id="hadithTitle">حدیث</h2>
-    <span></span>
-  </div>
-  <div id="hadithContainer"><div class="loading">حدیثیں لوڈ ہو رہی ہیں...</div></div>
-</section>
-
-<section id="seerah" class="hidden">
-  <div class="card">
-    <h2>🌙 سیرت النبی ﷺ</h2>
-    <p class="note">نوٹ: سیرت کی مستند صوتی ریکارڈنگ کے لیے فی الحال کوئی مفت اور بھروسہ مند API موجود نہیں، اس لیے یہ حصہ صرف تحریری صورت میں ہے۔</p>
-  </div>
-  <div id="seerahList"></div>
-</section>
-
-<section id="duas" class="hidden">
-  <div class="card"><h2>🤲 مسنون دعائیں</h2>
-  <p class="note">نوٹ: دعاؤں کی مستند صوتی ریکارڈنگ کے لیے فی الحال کوئی مفت API موجود نہیں، اس لیے یہ حصہ صرف تحریری صورت میں ہے۔</p></div>
-  <div id="duasList"></div>
-</section>
-
-<section id="tasbeeh" class="hidden">
-  <div class="card">
-    <h2>📿 تسبیح</h2>
-    <div id="tasbeehCount" class="big-number">0</div>
-    <div id="tasbeehLabel" style="text-align:center;color:#9eb4a9;margin-bottom:15px">سبحان اللہ</div>
-    <button class="primary" onclick="countTasbeeh()">ذکر کریں</button>
-    <br><br>
-    <button class="btn" onclick="resetTasbeeh()">ری سیٹ</button>
-  </div>
-</section>
-
-<section id="prayer" class="hidden">
-  <div class="card">
-    <h2>🕌 نماز کے اوقات</h2>
-    <button class="primary" onclick="loadPrayerTimes()">میرے مقام کے مطابق اوقات حاصل کریں</button>
-    <div id="prayerList" style="margin-top:15px">مقام کی اجازت دے کر اوقات حاصل کریں۔</div>
-  </div>
-</section>
-
-<section id="qibla" class="hidden">
-  <div class="card qibla">
-    <h2>🧭 قبلہ کی سمت</h2>
-    <p class="info">اپنے موجودہ مقام کی اجازت دیں تاکہ خانہ کعبہ کی سمت معلوم ہو سکے۔</p>
-    <button class="primary" onclick="findQibla()">📍 قبلہ معلوم کریں</button>
-    <div id="compass" class="compass">🕋</div>
-    <div id="qiblaText">ابھی سمت معلوم نہیں ہوئی۔</div>
-  </div>
-</section>
-
-<section id="kaaba" class="hidden">
-  <div class="card">
-    <div class="kaaba">🕋</div>
-    <h2>خانہ کعبہ</h2>
-    <p class="info">خانہ کعبہ مسجد الحرام، مکہ مکرمہ میں واقع مسلمانوں کا قبلہ ہے۔ مسلمان نماز کے وقت اسی سمت رخ کرتے ہیں۔</p>
-    <p class="info">کعبہ شریف کی تعمیر حضرت ابراہیم علیہ السلام اور حضرت اسماعیل علیہ السلام سے منسوب ہے۔</p>
-  </div>
-</section>
-
-<section id="about" class="hidden">
-  <div class="card">
-    <h2>ℹ️ Quran Companion</h2>
-    <p class="info">یہ ایپ قرآن پاک پڑھنے، اردو ترجمہ سمجھنے، تلاوت سننے، تفسیر دیکھنے، احادیث پڑھنے، سیرت النبی ﷺ سمجھنے، دعائیں پڑھنے، تسبیح کرنے، نماز کے اوقات اور قبلہ معلوم کرنے کے لیے بنائی گئی ہے۔</p>
-    <p class="info">قرآن، حدیث اور نماز کے اوقات کا ڈیٹا آن لائن اسلامی APIs سے حاصل کیا جاتا ہے۔</p>
-  </div>
-</section>
-
 </main>
 
 <div id="audioPlayer" class="audio hidden">
@@ -164,14 +85,6 @@
     <button onclick="nextAyah()">⏭</button>
     <button onclick="closeAudio()">✖</button>
   </div>
-</div>
-
-<div class="bottom">
-  <button onclick="goHome()"><span>🏠</span><small>ہوم</small></button>
-  <button onclick="openQuran()"><span>📖</span><small>قرآن</small></button>
-  <button onclick="openHadith()"><span>📗</span><small>حدیث</small></button>
-  <button onclick="openPrayer()"><span>🕌</span><small>نماز</small></button>
-  <button onclick="openQibla()"><span>🧭</span><small>قبلہ</small></button>
 </div>
 
 <div id="toast" class="message hidden"></div>
