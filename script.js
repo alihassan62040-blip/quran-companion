@@ -1,6 +1,4 @@
-/* =========================================================
-   QURAN COMPANION — CORRECTED script.js
-   ========================================================= */
+/* ===================== Quran Companion — script.js ===================== */
 
 const QURAN_BASE = "https://api.alquran.cloud/v1";
 const TAFSIR_BASE = "https://api.quran.com/api/v4";
@@ -8,22 +6,6 @@ const ALADHAN_BASE = "https://api.aladhan.com/v1";
 const CDN_AUDIO_SURAH = "https://cdn.islamic.network/quran/audio-surah/128";
 
 const GA_MEASUREMENT_ID = "G-2N96YJ324P";
-
-/* =========================
-   GOOGLE ANALYTICS
-========================= */
-
-function analyticsEvent(name, params = {}) {
-  try {
-    if (typeof window.gtag === "function") {
-      window.gtag("event", name, params);
-    }
-  } catch (e) {}
-}
-
-/* =========================
-   APP STATE
-========================= */
 
 let state = {
   surahList: [],
@@ -33,16 +15,19 @@ let state = {
   translation: localStorage.getItem("translation") || "ur.jalandhry",
   reciter: localStorage.getItem("reciter") || "ar.alafasy",
   fontSize: Number(localStorage.getItem("fontSize")) || 36,
-  fontFamily: localStorage.getItem("fontFamily") || "'Amiri',serif",
+  fontFamily:
+    localStorage.getItem("fontFamily") || "'Amiri',serif",
   playIndex: -1,
   isPlaying: false
 };
 
-let tafsirEditionId = null;
-
-/* =========================
-   HELPERS
-========================= */
+function analyticsEvent(name, params = {}) {
+  try {
+    if (typeof window.gtag === "function") {
+      window.gtag("event", name, params);
+    }
+  } catch (e) {}
+}
 
 function toast(msg) {
   const t = document.getElementById("toast");
@@ -51,9 +36,7 @@ function toast(msg) {
   t.textContent = msg;
   t.classList.remove("hidden");
 
-  clearTimeout(window.toastTimer);
-
-  window.toastTimer = setTimeout(() => {
+  setTimeout(() => {
     t.classList.add("hidden");
   }, 2500);
 }
@@ -61,7 +44,7 @@ function toast(msg) {
 function showSection(id) {
   document
     .querySelectorAll("main > section")
-    .forEach(section => section.classList.add("hidden"));
+    .forEach(s => s.classList.add("hidden"));
 
   const section = document.getElementById(id);
 
@@ -76,18 +59,16 @@ function setTitle(title) {
 }
 
 async function getJSON(url) {
-  const response = await fetch(url);
+  const res = await fetch(url);
 
-  if (!response.ok) {
-    throw new Error(`HTTP ${response.status}`);
+  if (!res.ok) {
+    throw new Error(`HTTP ${res.status}`);
   }
 
-  return await response.json();
+  return await res.json();
 }
 
-/* =========================
-   THEME
-========================= */
+/* ===================== THEME ===================== */
 
 function applyTheme() {
   const light = localStorage.getItem("theme") === "light";
@@ -102,25 +83,25 @@ function applyTheme() {
 }
 
 function toggleTheme() {
-  const isLight = localStorage.getItem("theme") === "light";
-  const newTheme = isLight ? "dark" : "light";
+  const light = localStorage.getItem("theme") === "light";
 
-  localStorage.setItem("theme", newTheme);
+  localStorage.setItem(
+    "theme",
+    light ? "dark" : "light"
+  );
+
   applyTheme();
 
   analyticsEvent("theme_changed", {
-    theme: newTheme
+    theme: light ? "dark" : "light"
   });
 }
 
-/* =========================
-   HOME
-========================= */
+/* ===================== NAVIGATION ===================== */
 
 function goHome() {
   showSection("home");
   setTitle("قرآن کریم");
-
   analyticsEvent("home_opened");
 }
 
@@ -130,15 +111,9 @@ function toggleSettings() {
   if (!settings) return;
 
   settings.classList.toggle("hidden");
-
-  analyticsEvent("settings_toggled", {
-    visible: !settings.classList.contains("hidden")
-  });
 }
 
-/* =========================
-   SURAH LIST
-========================= */
+/* ===================== QURAN ===================== */
 
 async function openQuran() {
   showSection("quran");
@@ -150,13 +125,13 @@ async function openQuran() {
 
   if (!container) return;
 
-  if (state.surahList.length > 0) {
+  if (state.surahList.length) {
     renderSurahList(state.surahList);
     return;
   }
 
   container.innerHTML =
-    `<div class="loading">سورتیں لوڈ ہو رہی ہیں...</div>`;
+    '<div class="loading">سورتیں لوڈ ہو رہی ہیں...</div>';
 
   try {
     const data = await getJSON(`${QURAN_BASE}/surah`);
@@ -166,9 +141,8 @@ async function openQuran() {
       : [];
 
     renderSurahList(state.surahList);
-
-  } catch (error) {
-    console.error("Surah list error:", error);
+  } catch (e) {
+    console.error(e);
 
     container.innerHTML = `
       <div class="loading">
@@ -189,46 +163,35 @@ function renderSurahList(list) {
 
   if (!container) return;
 
-  if (!list.length) {
-    container.innerHTML =
-      `<div class="loading">کوئی سورت نہیں ملی۔</div>`;
-    return;
-  }
-
   container.innerHTML = `
     <div class="surah-list">
+      ${list
+        .map(
+          s => `
+            <button
+              class="surah"
+              onclick="openSurah(${s.number})"
+            >
+              <div class="surah-number">
+                ${s.number}
+              </div>
 
-      ${list.map(s => `
-        <button
-          type="button"
-          class="surah"
-          onclick="openSurah(${s.number})"
-        >
+              <div class="surah-name">
+                <strong>${s.name}</strong>
 
-          <div class="surah-number">
-            ${s.number}
-          </div>
-
-          <div class="surah-name">
-
-            <strong>
-              ${s.name}
-            </strong>
-
-            <small>
-              ${s.englishName}
-              —
-              ${s.englishNameTranslation}
-              ·
-              ${s.numberOfAyahs}
-              آیات
-            </small>
-
-          </div>
-
-        </button>
-      `).join("")}
-
+                <small>
+                  ${s.englishName}
+                  —
+                  ${s.englishNameTranslation}
+                  ·
+                  ${s.numberOfAyahs}
+                  آیات
+                </small>
+              </div>
+            </button>
+          `
+        )
+        .join("")}
     </div>
   `;
 }
@@ -266,31 +229,31 @@ function trySearchAyah() {
 
   const q = input.value.trim();
 
-  const match = q.match(/^(\d{1,3})\s*:\s*(\d{1,3})$/);
+  const m = q.match(/^(\d{1,3})\s*:\s*(\d{1,3})$/);
 
-  if (!match) return;
+  if (!m) return;
 
-  const surahNumber = Number(match[1]);
-  const ayahNumber = Number(match[2]);
+  const surahNum = Number(m[1]);
+  const ayahNum = Number(m[2]);
 
-  const surah = state.surahList.find(
-    s => s.number === surahNumber
+  const s = state.surahList.find(
+    x => x.number === surahNum
   );
 
-  if (!surah) {
+  if (!s) {
     toast("سورہ نمبر غلط ہے");
     return;
   }
 
   if (
-    ayahNumber < 1 ||
-    ayahNumber > surah.numberOfAyahs
+    ayahNum < 1 ||
+    ayahNum > s.numberOfAyahs
   ) {
     toast("آیت نمبر غلط ہے");
     return;
   }
 
-  openSurah(surahNumber, ayahNumber);
+  openSurah(surahNum, ayahNum);
 }
 
 function backToSurahs() {
@@ -298,400 +261,13 @@ function backToSurahs() {
   setTitle("قرآن کریم");
 }
 
-/* =========================
-   SURAH READER
-========================= */
-
-async function openSurah(number, scrollToAyah = null) {
-  showSection("reader");
-
-  document
-    .getElementById("settings")
-    ?.classList.add("hidden");
-
-  document
-    .getElementById("fullSurahBtn")
-    ?.classList.remove("hidden");
-
-  const container = document.getElementById("ayahContainer");
-
-  if (!container) return;
-
-  container.innerHTML =
-    `<div class="loading">قرآن لوڈ ہو رہا ہے...</div>`;
-
-  state.currentSurahNumber = Number(number);
-  state.currentJuz = null;
-
-  localStorage.setItem("lastSurah", number);
-
-  setReaderSettings();
-
-  analyticsEvent("surah_opened", {
-    surah_number: number
-  });
-
-  try {
-    const editions =
-      `quran-uthmani,${state.translation},${state.reciter}`;
-
-    const data = await getJSON(
-      `${QURAN_BASE}/surah/${number}/editions/${editions}`
-    );
-
-    if (
-      !data.data ||
-      data.data.length < 3
-    ) {
-      throw new Error("Invalid API response");
-    }
-
-    const arabicEd = data.data[0];
-    const transEd = data.data[1];
-    const audioEd = data.data[2];
-
-    setTitle(arabicEd.name);
-
-    const readerTitle =
-      document.getElementById("readerTitle");
-
-    if (readerTitle) {
-      readerTitle.textContent =
-        `${arabicEd.englishName} — ${arabicEd.name}`;
-    }
-
-    state.currentAyahs = arabicEd.ayahs.map((ayah, index) => ({
-      numberInSurah: ayah.numberInSurah,
-      globalNumber: ayah.number,
-      surahNumber: number,
-      surahName: arabicEd.name,
-      arabic: ayah.text,
-      translation:
-        transEd.ayahs[index]?.text || "",
-      audio:
-        audioEd.ayahs[index]?.audio || ""
-    }));
-
-    renderAyahs(false);
-
-    if (scrollToAyah) {
-      setTimeout(() => {
-        const ayah = state.currentAyahs.find(
-          a => a.numberInSurah === Number(scrollToAyah)
-        );
-
-        if (ayah) {
-          const el =
-            document.getElementById(
-              `ayah-${ayah.globalNumber}`
-            );
-
-          el?.scrollIntoView({
-            behavior: "smooth",
-            block: "center"
-          });
-        }
-      }, 300);
-    }
-
-  } catch (error) {
-    console.error("Open surah error:", error);
-
-    container.innerHTML = `
-      <div class="loading">
-        قرآن لوڈ نہیں ہو سکا۔
-        <br><br>
-        انٹرنیٹ چیک کریں۔
-        <br><br>
-        <button
-          class="btn"
-          onclick="openSurah(${number})"
-        >
-          دوبارہ کوشش کریں
-        </button>
-      </div>
-    `;
-  }
-}
-
-/* =========================
-   AYAH RENDER
-========================= */
-
-function renderAyahs(isJuz = false) {
-  const container = document.getElementById("ayahContainer");
-
-  if (!container) return;
-
-  let html = "";
-
-  if (!isJuz) {
-    const surah = state.surahList.find(
-      s => s.number === state.currentSurahNumber
-    );
-
-    if (
-      surah &&
-      state.currentSurahNumber !== 1 &&
-      state.currentSurahNumber !== 9
-    ) {
-      html += `
-        <div class="ayah" style="text-align:center">
-          <div
-            class="arabic"
-            style="
-              font-size:${state.fontSize}px;
-              font-family:${state.fontFamily}
-            "
-          >
-            بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
-          </div>
-        </div>
-      `;
-    }
-  }
-
-  const bookmarks = getBookmarks();
-
-  state.currentAyahs.forEach((ayah, index) => {
-    const saved = bookmarks.some(
-      b => b.globalNumber === ayah.globalNumber
-    );
-
-    let juzHeader = "";
-
-    if (
-      isJuz &&
-      (
-        index === 0 ||
-        state.currentAyahs[index - 1].surahNumber !==
-          ayah.surahNumber
-      )
-    ) {
-      juzHeader = `
-        <div
-          class="reader-top"
-          style="margin-top:6px"
-        >
-          <h2>${ayah.surahName}</h2>
-          <span></span>
-        </div>
-      `;
-    }
-
-    html += `
-      ${juzHeader}
-
-      <div
-        class="ayah"
-        id="ayah-${ayah.globalNumber}"
-      >
-
-        <div class="ayah-top">
-
-          <div class="ayah-number">
-            ${ayah.numberInSurah}
-          </div>
-
-          <div class="ayah-actions">
-
-            <button
-              type="button"
-              class="icon-btn"
-              onclick="playFromIndex(${index})"
-              title="سنیں"
-            >
-              🔊
-            </button>
-
-            <button
-              type="button"
-              class="icon-btn ${saved ? "saved" : ""}"
-              id="bm-${ayah.globalNumber}"
-              onclick="toggleBookmark(${ayah.globalNumber})"
-              title="محفوظ کریں"
-            >
-              ⭐
-            </button>
-
-          </div>
-
-        </div>
-
-        <div
-          class="arabic"
-          style="
-            font-size:${state.fontSize}px;
-            font-family:${state.fontFamily}
-          "
-        >
-          ${ayah.arabic}
-        </div>
-
-        <div class="translation">
-
-          <div class="translation-title">
-            ترجمہ
-          </div>
-
-          ${ayah.translation}
-
-        </div>
-
-        <button
-          type="button"
-          class="tafseer-btn"
-          onclick="
-            toggleTafseer(
-              ${ayah.globalNumber},
-              ${ayah.surahNumber},
-              ${ayah.numberInSurah}
-            )
-          "
-        >
-          📘 تفسیر دیکھیں
-        </button>
-
-        <div
-          class="tafseer hidden"
-          id="tafseer-${ayah.globalNumber}"
-        ></div>
-
-      </div>
-    `;
-  });
-
-  container.innerHTML = html;
-}
-
-/* =========================
-   SETTINGS
-========================= */
-
-function setReaderSettings() {
-  const translation =
-    document.getElementById("translationSelect");
-
-  const reciter =
-    document.getElementById("reciterSelect");
-
-  const fontSize =
-    document.getElementById("fontSize");
-
-  const fontFamily =
-    document.getElementById("fontFamilySelect");
-
-  if (translation) {
-    translation.value = state.translation;
-  }
-
-  if (reciter) {
-    reciter.value = state.reciter;
-  }
-
-  if (fontSize) {
-    fontSize.value = state.fontSize;
-  }
-
-  if (fontFamily) {
-    fontFamily.value = state.fontFamily;
-  }
-}
-
-function changeArabicSize(value) {
-  state.fontSize = Number(value);
-
-  localStorage.setItem(
-    "fontSize",
-    state.fontSize
-  );
-
-  document
-    .querySelectorAll(".arabic")
-    .forEach(el => {
-      el.style.fontSize =
-        `${state.fontSize}px`;
-    });
-}
-
-function changeFontFamily(value) {
-  state.fontFamily = value;
-
-  localStorage.setItem(
-    "fontFamily",
-    value
-  );
-
-  document
-    .querySelectorAll(".arabic")
-    .forEach(el => {
-      el.style.fontFamily = value;
-    });
-
-  analyticsEvent(
-    "font_family_changed",
-    {
-      font_family: value
-    }
-  );
-}
-
-function changeTranslation(value) {
-  state.translation = value;
-
-  localStorage.setItem(
-    "translation",
-    value
-  );
-
-  if (state.currentJuz) {
-    openJuz(state.currentJuz);
-  } else if (state.currentSurahNumber) {
-    openSurah(state.currentSurahNumber);
-  }
-
-  analyticsEvent(
-    "translation_changed",
-    {
-      translation: value
-    }
-  );
-}
-
-function changeReciter(value) {
-  state.reciter = value;
-
-  localStorage.setItem(
-    "reciter",
-    value
-  );
-
-  if (state.currentJuz) {
-    openJuz(state.currentJuz);
-  } else if (state.currentSurahNumber) {
-    openSurah(state.currentSurahNumber);
-  }
-
-  analyticsEvent(
-    "reciter_changed",
-    {
-      reciter: value
-    }
-  );
-}
-
-/* =========================
-   JUZ
-========================= */
+/* ===================== JUZ ===================== */
 
 function openJuzList() {
   showSection("juzList");
   setTitle("پارہ منتخب کریں");
 
-  analyticsEvent("juz_list_opened");
-
-  const grid =
-    document.getElementById("juzGrid");
+  const grid = document.getElementById("juzGrid");
 
   if (!grid) return;
 
@@ -700,7 +276,6 @@ function openJuzList() {
   for (let i = 1; i <= 30; i++) {
     html += `
       <button
-        type="button"
         class="juz-item"
         onclick="openJuz(${i})"
       >
@@ -724,16 +299,15 @@ async function openJuz(juzNumber) {
     .getElementById("fullSurahBtn")
     ?.classList.add("hidden");
 
-  const container =
-    document.getElementById("ayahContainer");
+  const container = document.getElementById("ayahContainer");
 
-  if (!container) return;
-
-  container.innerHTML =
-    `<div class="loading">لوڈ ہو رہا ہے...</div>`;
+  if (container) {
+    container.innerHTML =
+      '<div class="loading">لوڈ ہو رہا ہے...</div>';
+  }
 
   state.currentSurahNumber = null;
-  state.currentJuz = Number(juzNumber);
+  state.currentJuz = juzNumber;
 
   setTitle(`پارہ ${juzNumber}`);
 
@@ -741,15 +315,8 @@ async function openJuz(juzNumber) {
     document.getElementById("readerTitle");
 
   if (readerTitle) {
-    readerTitle.textContent =
-      `پارہ ${juzNumber}`;
+    readerTitle.textContent = `پارہ ${juzNumber}`;
   }
-
-  setReaderSettings();
-
-  analyticsEvent("juz_opened", {
-    juz_number: juzNumber
-  });
 
   try {
     const editions =
@@ -759,64 +326,380 @@ async function openJuz(juzNumber) {
       `${QURAN_BASE}/juz/${juzNumber}/editions/${editions}`
     );
 
-    if (
-      !data.data ||
-      data.data.length < 3
-    ) {
-      throw new Error("Invalid Juz response");
-    }
+    const [arabicEd, transEd, audioEd] = data.data;
 
-    const arabicEd = data.data[0];
-    const transEd = data.data[1];
-    const audioEd = data.data[2];
-
-    state.currentAyahs =
-      arabicEd.ayahs.map((ayah, index) => ({
-        numberInSurah:
-          ayah.numberInSurah,
-
-        globalNumber:
-          ayah.number,
-
-        surahNumber:
-          ayah.surah?.number || null,
-
-        surahName:
-          ayah.surah?.name || "",
-
-        arabic:
-          ayah.text,
-
-        translation:
-          transEd.ayahs[index]?.text || "",
-
-        audio:
-          audioEd.ayahs[index]?.audio || ""
-      }));
+    state.currentAyahs = arabicEd.ayahs.map(
+      (a, i) => ({
+        numberInSurah: a.numberInSurah,
+        globalNumber: a.number,
+        surahNumber: a.surah?.number || null,
+        surahName: a.surah?.name || "",
+        arabic: a.text,
+        translation: transEd.ayahs[i]?.text || "",
+        audio: audioEd.ayahs[i]?.audio || ""
+      })
+    );
 
     renderAyahs(true);
+  } catch (e) {
+    console.error(e);
 
-  } catch (error) {
-    console.error("Juz error:", error);
-
-    container.innerHTML = `
-      <div class="loading">
-        پارہ لوڈ نہیں ہو سکا۔
-        <br><br>
-        <button
-          class="btn"
-          onclick="openJuz(${juzNumber})"
-        >
-          دوبارہ کوشش کریں
-        </button>
-      </div>
-    `;
+    if (container) {
+      container.innerHTML = `
+        <div class="loading">
+          لوڈ نہیں ہو سکا۔
+          <br><br>
+          <button
+            class="btn"
+            onclick="openJuz(${juzNumber})"
+          >
+            دوبارہ کوشش کریں
+          </button>
+        </div>
+      `;
+    }
   }
 }
 
-/* =========================
-   TAFSIR
-========================= */
+/* ===================== SURAH READER ===================== */
+
+async function openSurah(number, scrollToAyah = null) {
+  showSection("reader");
+
+  document
+    .getElementById("settings")
+    ?.classList.add("hidden");
+
+  document
+    .getElementById("fullSurahBtn")
+    ?.classList.remove("hidden");
+
+  const container =
+    document.getElementById("ayahContainer");
+
+  if (container) {
+    container.innerHTML =
+      '<div class="loading">قرآن لوڈ ہو رہا ہے...</div>';
+  }
+
+  const translationSelect =
+    document.getElementById("translationSelect");
+
+  if (translationSelect) {
+    translationSelect.value = state.translation;
+  }
+
+  const reciterSelect =
+    document.getElementById("reciterSelect");
+
+  if (reciterSelect) {
+    reciterSelect.value = state.reciter;
+  }
+
+  const fontSize =
+    document.getElementById("fontSize");
+
+  if (fontSize) {
+    fontSize.value = state.fontSize;
+  }
+
+  const fontFamily =
+    document.getElementById("fontFamilySelect");
+
+  if (fontFamily) {
+    fontFamily.value = state.fontFamily;
+  }
+
+  state.currentSurahNumber = number;
+  state.currentJuz = null;
+
+  localStorage.setItem("lastSurah", number);
+
+  try {
+    const editions =
+      `quran-uthmani,${state.translation},${state.reciter}`;
+
+    const data = await getJSON(
+      `${QURAN_BASE}/surah/${number}/editions/${editions}`
+    );
+
+    const [arabicEd, transEd, audioEd] = data.data;
+
+    setTitle(arabicEd.name);
+
+    const readerTitle =
+      document.getElementById("readerTitle");
+
+    if (readerTitle) {
+      readerTitle.textContent =
+        `${arabicEd.englishName} — ${arabicEd.name}`;
+    }
+
+    state.currentAyahs = arabicEd.ayahs.map(
+      (a, i) => ({
+        numberInSurah: a.numberInSurah,
+        globalNumber: a.number,
+        surahNumber: number,
+        surahName: arabicEd.name,
+        arabic: a.text,
+        translation: transEd.ayahs[i]?.text || "",
+        audio: audioEd.ayahs[i]?.audio || ""
+      })
+    );
+
+    renderAyahs(false);
+
+    if (scrollToAyah) {
+      setTimeout(() => {
+        const el = document.getElementById(
+          `ayah-${state.currentAyahs.find(
+            a => a.numberInSurah === Number(scrollToAyah)
+          )?.globalNumber}`
+        );
+
+        if (el) {
+          el.scrollIntoView({
+            behavior: "smooth",
+            block: "center"
+          });
+        }
+      }, 300);
+    }
+  } catch (e) {
+    console.error(e);
+
+    if (container) {
+      container.innerHTML = `
+        <div class="loading">
+          قرآن لوڈ نہیں ہو سکا۔
+          <br><br>
+          انٹرنیٹ چیک کریں۔
+          <br><br>
+          <button
+            class="btn"
+            onclick="openSurah(${number})"
+          >
+            دوبارہ کوشش کریں
+          </button>
+        </div>
+      `;
+    }
+  }
+}
+
+/* ===================== AYAH RENDER ===================== */
+
+function renderAyahs(isJuz) {
+  let bismillah = "";
+
+  if (!isJuz) {
+    const s = state.surahList.find(
+      x => x.number === state.currentSurahNumber
+    );
+
+    if (
+      s &&
+      state.currentSurahNumber !== 1 &&
+      state.currentSurahNumber !== 9
+    ) {
+      bismillah = `
+        <div
+          class="ayah"
+          style="text-align:center"
+        >
+          <div
+            class="arabic"
+            style="
+              font-size:${state.fontSize}px;
+              font-family:${state.fontFamily}
+            "
+          >
+            بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
+          </div>
+        </div>
+      `;
+    }
+  }
+
+  const savedList = getBookmarks();
+
+  const container =
+    document.getElementById("ayahContainer");
+
+  if (!container) return;
+
+  container.innerHTML =
+    bismillah +
+    state.currentAyahs
+      .map((a, i) => {
+        const isSaved = savedList.some(
+          b =>
+            b.globalNumber ===
+            a.globalNumber
+        );
+
+        const previous =
+          state.currentAyahs[i - 1];
+
+        const juzHeader =
+          isJuz &&
+          (i === 0 ||
+            previous?.surahNumber !==
+              a.surahNumber)
+            ? `
+              <div
+                class="reader-top"
+                style="margin-top:6px"
+              >
+                <h2>${a.surahName}</h2>
+                <span></span>
+              </div>
+            `
+            : "";
+
+        return `
+          ${juzHeader}
+
+          <div
+            class="ayah"
+            id="ayah-${a.globalNumber}"
+          >
+
+            <div class="ayah-top">
+
+              <div class="ayah-number">
+                ${a.numberInSurah}
+              </div>
+
+              <div class="ayah-actions">
+
+                <button
+                  class="icon-btn"
+                  onclick="playFromIndex(${i})"
+                  title="سنیں"
+                >
+                  🔊
+                </button>
+
+                <button
+                  class="icon-btn ${
+                    isSaved ? "saved" : ""
+                  }"
+                  id="bm-${a.globalNumber}"
+                  onclick="toggleBookmark(${a.globalNumber})"
+                  title="محفوظ کریں"
+                >
+                  ⭐
+                </button>
+
+              </div>
+            </div>
+
+            <div
+              class="arabic"
+              style="
+                font-size:${state.fontSize}px;
+                font-family:${state.fontFamily}
+              "
+            >
+              ${a.arabic}
+            </div>
+
+            <div class="translation">
+              <div class="translation-title">
+                ترجمہ
+              </div>
+              ${a.translation}
+            </div>
+
+            <button
+              class="tafseer-btn"
+              onclick="toggleTafseer(
+                ${a.globalNumber},
+                ${a.surahNumber},
+                ${a.numberInSurah}
+              )"
+            >
+              📘 تفسیر دیکھیں
+            </button>
+
+            <div
+              class="tafseer hidden"
+              id="tafseer-${a.globalNumber}"
+            ></div>
+
+          </div>
+        `;
+      })
+      .join("");
+}
+
+/* ===================== SETTINGS ===================== */
+
+function changeArabicSize(v) {
+  state.fontSize = Number(v);
+
+  localStorage.setItem(
+    "fontSize",
+    state.fontSize
+  );
+
+  document
+    .querySelectorAll(".arabic")
+    .forEach(el => {
+      el.style.fontSize =
+        `${state.fontSize}px`;
+    });
+}
+
+function changeFontFamily(v) {
+  state.fontFamily = v;
+
+  localStorage.setItem(
+    "fontFamily",
+    v
+  );
+
+  document
+    .querySelectorAll(".arabic")
+    .forEach(el => {
+      el.style.fontFamily = v;
+    });
+}
+
+function changeTranslation(v) {
+  state.translation = v;
+
+  localStorage.setItem(
+    "translation",
+    v
+  );
+
+  if (state.currentJuz) {
+    openJuz(state.currentJuz);
+  } else if (state.currentSurahNumber) {
+    openSurah(state.currentSurahNumber);
+  }
+}
+
+function changeReciter(v) {
+  state.reciter = v;
+
+  localStorage.setItem(
+    "reciter",
+    v
+  );
+
+  if (state.currentJuz) {
+    openJuz(state.currentJuz);
+  } else if (state.currentSurahNumber) {
+    openSurah(state.currentSurahNumber);
+  }
+}
+
+/* ===================== TAFSEER ===================== */
+
+let tafsirEditionId = null;
 
 async function toggleTafseer(
   globalAyahNumber,
@@ -837,20 +720,10 @@ async function toggleTafseer(
 
   box.classList.remove("hidden");
 
-  if (box.dataset.loaded === "1") {
-    return;
-  }
+  if (box.dataset.loaded) return;
 
   box.innerHTML =
-    `<div class="loading">تفسیر لوڈ ہو رہی ہے...</div>`;
-
-  analyticsEvent(
-    "tafsir_opened",
-    {
-      surah_number: surahNumber,
-      ayah_number: ayahInSurah
-    }
-  );
+    '<div class="loading">تفسیر لوڈ ہو رہی ہے...</div>';
 
   try {
     if (!tafsirEditionId) {
@@ -858,64 +731,51 @@ async function toggleTafseer(
         `${TAFSIR_BASE}/resources/tafsirs?language=urdu`
       );
 
-      const tafsirs =
-        Array.isArray(list.tafsirs)
-          ? list.tafsirs
-          : [];
-
       const urdu =
-        tafsirs.find(
-          t =>
-            String(t.language_name).toLowerCase() ===
-            "urdu"
-        ) || tafsirs[0];
+        (list.tafsirs || []).find(
+          t => t.language_name === "urdu"
+        ) ||
+        (list.tafsirs || [])[0];
 
       tafsirEditionId =
-        urdu?.id || null;
+        urdu ? urdu.id : null;
     }
 
     if (!tafsirEditionId) {
-      throw new Error("No tafsir edition");
+      throw new Error("No tafsir");
     }
 
     const key =
       `${surahNumber}:${ayahInSurah}`;
 
-    const result =
-      await getJSON(
-        `${TAFSIR_BASE}/tafsirs/${tafsirEditionId}/by_ayah/${key}`
-      );
-
-    let text =
-      result.tafsir?.text ||
-      "تفسیر دستیاب نہیں۔";
-
-    text = text.replace(
-      /<[^>]*>/g,
-      " "
+    const tf = await getJSON(
+      `${TAFSIR_BASE}/tafsirs/${tafsirEditionId}/by_ayah/${key}`
     );
 
-    box.innerHTML = text;
-    box.dataset.loaded = "1";
-
-  } catch (error) {
-    console.error("Tafsir error:", error);
+    const text =
+      tf.tafsir?.text ||
+      "تفسیر دستیاب نہیں۔";
 
     box.innerHTML =
-      "تفسیر لوڈ نہیں ہو سکی۔ دوبارہ کوشش کریں۔";
+      text.replace(/<[^>]*>/g, " ");
+
+    box.dataset.loaded = "1";
+  } catch (e) {
+    console.error(e);
+
+    box.innerHTML =
+      "تفسیر لوڈ نہیں ہو سکی۔";
   }
 }
 
-/* =========================
-   BOOKMARKS
-========================= */
+/* ===================== BOOKMARKS ===================== */
 
 function getBookmarks() {
   try {
     return JSON.parse(
       localStorage.getItem("bookmarks") || "[]"
     );
-  } catch (error) {
+  } catch (e) {
     return [];
   }
 }
@@ -928,104 +788,81 @@ function saveBookmarks(list) {
 }
 
 function toggleBookmark(globalAyahNumber) {
-  const ayah =
-    state.currentAyahs.find(
-      a =>
-        a.globalNumber ===
-        globalAyahNumber
-    );
+  const a = state.currentAyahs.find(
+    x =>
+      x.globalNumber ===
+      globalAyahNumber
+  );
 
-  if (!ayah) return;
+  if (!a) return;
 
   let list = getBookmarks();
 
-  const index =
-    list.findIndex(
-      b =>
-        b.globalNumber ===
-        globalAyahNumber
-    );
+  const idx = list.findIndex(
+    b =>
+      b.globalNumber ===
+      globalAyahNumber
+  );
 
-  const button =
+  const btn =
     document.getElementById(
       `bm-${globalAyahNumber}`
     );
 
-  if (index >= 0) {
-    list.splice(index, 1);
+  if (idx >= 0) {
+    list.splice(idx, 1);
 
-    button?.classList.remove("saved");
+    btn?.classList.remove("saved");
 
     toast(
       "محفوظ شدہ سے ہٹا دیا گیا"
     );
-
-    analyticsEvent(
-      "bookmark_removed",
-      {
-        surah_number:
-          ayah.surahNumber,
-
-        ayah_number:
-          ayah.numberInSurah
-      }
-    );
-
   } else {
     list.unshift({
       globalNumber:
-        ayah.globalNumber,
-
+        a.globalNumber,
       surahNumber:
-        ayah.surahNumber,
-
+        a.surahNumber,
       surahName:
-        ayah.surahName,
-
+        a.surahName,
       numberInSurah:
-        ayah.numberInSurah,
-
+        a.numberInSurah,
       savedAt:
         Date.now()
     });
 
-    button?.classList.add("saved");
+    btn?.classList.add("saved");
 
     toast(
       "محفوظ کر لیا گیا ✓"
-    );
-
-    analyticsEvent(
-      "bookmark_added",
-      {
-        surah_number:
-          ayah.surahNumber,
-
-        ayah_number:
-          ayah.numberInSurah
-      }
     );
   }
 
   saveBookmarks(list);
 
-  if (ayah.surahNumber) {
+  if (a.surahNumber) {
     localStorage.setItem(
       "lastSurah",
-      ayah.surahNumber
+      a.surahNumber
     );
 
     localStorage.setItem(
       "lastAyah",
-      ayah.numberInSurah
+      a.numberInSurah
     );
   }
 }
 
 function openBookmarks() {
-  showSection("bookmarksSection");
+  showSection(
+    "bookmarksSection"
+  );
 
-  setTitle("محفوظ شدہ مقامات");
+  setTitle(
+    "محفوظ شدہ مقامات"
+  );
+
+  const list = getBookmarks();
 
   const container =
     document.getElementById(
@@ -1034,70 +871,68 @@ function openBookmarks() {
 
   if (!container) return;
 
-  const list = getBookmarks();
-
   if (!list.length) {
     container.innerHTML = `
       <div class="loading">
         ابھی کوئی مقام محفوظ نہیں۔
-        <br><br>
+        <br>
         کسی آیت پر ⭐ دبا کر محفوظ کریں۔
       </div>
     `;
     return;
   }
 
-  container.innerHTML =
-    list.map(bookmark => `
-      <div class="bookmark-card">
+  container.innerHTML = list
+    .map(
+      b => `
+        <div class="bookmark-card">
 
-        <button
-          type="button"
-          class="bookmark-del"
-          onclick="
-            removeBookmark(
-              ${bookmark.globalNumber},
+          <button
+            class="bookmark-del"
+            onclick="removeBookmark(
+              ${b.globalNumber},
               event
-            )
-          "
-        >
-          🗑
-        </button>
+            )"
+          >
+            🗑
+          </button>
 
-        <button
-          type="button"
-          class="bookmark-info"
-          onclick="
-            openSurah(
-              ${bookmark.surahNumber},
-              ${bookmark.numberInSurah}
-            )
-          "
-        >
+          <button
+            class="bookmark-info"
+            style="
+              background:none;
+              border:0;
+              color:inherit
+            "
+            onclick="openSurah(
+              ${b.surahNumber},
+              ${b.numberInSurah}
+            )"
+          >
+            <strong>
+              ${b.surahName}
+              —
+              آیت ${b.numberInSurah}
+            </strong>
 
-          <strong>
-            ${bookmark.surahName}
-            —
-            آیت ${bookmark.numberInSurah}
-          </strong>
+            <small>
+              ${new Date(
+                b.savedAt
+              ).toLocaleDateString("ur")}
+            </small>
+          </button>
 
-          <small>
-            ${new Date(
-              bookmark.savedAt
-            ).toLocaleDateString("ur-PK")}
-          </small>
-
-        </button>
-
-      </div>
-    `).join("");
+        </div>
+      `
+    )
+    .join("");
 }
 
 function removeBookmark(
   globalAyahNumber,
-  event
+  e
 ) {
-  event?.stopPropagation();
+  e.stopPropagation();
 
   const list =
     getBookmarks().filter(
@@ -1108,19 +943,21 @@ function removeBookmark(
 
   saveBookmarks(list);
 
-  toast("محفوظ مقام حذف کر دیا گیا");
-
   openBookmarks();
 }
 
 function continueReading() {
-  const surah =
-    localStorage.getItem("lastSurah");
+  const s =
+    localStorage.getItem(
+      "lastSurah"
+    );
 
-  const ayah =
-    localStorage.getItem("lastAyah");
+  const a =
+    localStorage.getItem(
+      "lastAyah"
+    );
 
-  if (!surah) {
+  if (!s) {
     toast(
       "ابھی کوئی محفوظ شدہ مقام نہیں"
     );
@@ -1130,61 +967,45 @@ function continueReading() {
   }
 
   openSurah(
-    Number(surah),
-    ayah ? Number(ayah) : null
+    Number(s),
+    a ? Number(a) : null
   );
 }
 
-/* =========================
-   AUDIO
-========================= */
+/* ===================== AUDIO ===================== */
 
 function audioEl() {
-  return document.getElementById("audioEl");
-}
-
-function showAudioPlayer() {
-  document
-    .getElementById("audioPlayer")
-    ?.classList.remove("hidden");
-}
-
-function playFromIndex(index) {
-  if (
-    index < 0 ||
-    index >= state.currentAyahs.length
-  ) {
-    return;
-  }
-
-  state.playIndex = index;
-
-  const ayah =
-    state.currentAyahs[index];
-
-  analyticsEvent(
-    "ayah_audio_play",
-    {
-      surah_number:
-        ayah?.surahNumber,
-
-      ayah_number:
-        ayah?.numberInSurah
-    }
+  return document.getElementById(
+    "audioEl"
   );
+}
+
+function playFromIndex(i) {
+  if (!state.currentAyahs[i]) return;
+
+  state.playIndex = i;
 
   playCurrent();
 }
 
 function playCurrent() {
-  const ayah =
+  const a =
     state.currentAyahs[
       state.playIndex
     ];
 
-  if (!ayah) return;
+  if (!a) return;
 
-  showAudioPlayer();
+  const player =
+    document.getElementById(
+      "audioPlayer"
+    );
+
+  if (player) {
+    player.classList.remove(
+      "hidden"
+    );
+  }
 
   const title =
     document.getElementById(
@@ -1193,88 +1014,72 @@ function playCurrent() {
 
   if (title) {
     title.textContent =
-      `${ayah.surahName} — آیت ${ayah.numberInSurah}`;
+      `${a.surahName} — آیت ${a.numberInSurah}`;
   }
 
   document
     .querySelectorAll(".ayah")
     .forEach(el =>
-      el.classList.remove("current")
+      el.classList.remove(
+        "current"
+      )
     );
 
-  const ayahElement =
+  const ayah =
     document.getElementById(
-      `ayah-${ayah.globalNumber}`
+      `ayah-${a.globalNumber}`
     );
 
-  ayahElement?.classList.add("current");
+  if (ayah) {
+    ayah.classList.add("current");
 
-  ayahElement?.scrollIntoView({
-    behavior: "smooth",
-    block: "center"
-  });
+    ayah.scrollIntoView({
+      behavior: "smooth",
+      block: "center"
+    });
+  }
 
   const audio = audioEl();
 
   if (!audio) return;
 
-  if (!ayah.audio) {
-    toast("اس آیت کی آڈیو دستیاب نہیں");
+  if (!a.audio) {
+    toast(
+      "اس آیت کی آڈیو دستیاب نہیں"
+    );
     return;
   }
 
-  audio.src = ayah.audio;
+  audio.src = a.audio;
 
-  audio.play()
-    .then(() => {
-      state.isPlaying = true;
+  audio.play().catch(() => {
+    state.isPlaying = false;
+  });
 
-      const btn =
-        document.getElementById(
-          "playPauseBtn"
-        );
+  localStorage.setItem(
+    "lastSurah",
+    a.surahNumber
+  );
 
-      if (btn) btn.textContent = "⏸";
-    })
-    .catch(error => {
-      console.error("Audio error:", error);
-
-      state.isPlaying = false;
-
-      const btn =
-        document.getElementById(
-          "playPauseBtn"
-        );
-
-      if (btn) btn.textContent = "▶";
-    });
-
-  if (ayah.surahNumber) {
-    localStorage.setItem(
-      "lastSurah",
-      ayah.surahNumber
-    );
-
-    localStorage.setItem(
-      "lastAyah",
-      ayah.numberInSurah
-    );
-  }
+  localStorage.setItem(
+    "lastAyah",
+    a.numberInSurah
+  );
 }
 
 function playFullSurah() {
-  if (!state.currentSurahNumber) {
-    toast("پہلے کوئی سورت کھولیں");
-    return;
+  if (!state.currentSurahNumber) return;
+
+  const player =
+    document.getElementById(
+      "audioPlayer"
+    );
+
+  if (player) {
+    player.classList.remove(
+      "hidden"
+    );
   }
-
-  const audio = audioEl();
-
-  if (!audio) return;
-
-  showAudioPlayer();
-
-  state.playIndex = -1;
 
   const title =
     document.getElementById(
@@ -1286,44 +1091,18 @@ function playFullSurah() {
       "پوری سورت — مسلسل تلاوت";
   }
 
-  document
-    .querySelectorAll(".ayah")
-    .forEach(el =>
-      el.classList.remove("current")
-    );
+  state.playIndex = -1;
+
+  const audio = audioEl();
+
+  if (!audio) return;
 
   audio.src =
     `${CDN_AUDIO_SURAH}/${state.reciter}/${state.currentSurahNumber}.mp3`;
 
-  audio.play()
-    .then(() => {
-      state.isPlaying = true;
-
-      const btn =
-        document.getElementById(
-          "playPauseBtn"
-        );
-
-      if (btn) btn.textContent = "⏸";
-
-      analyticsEvent(
-        "full_surah_audio_played",
-        {
-          surah_number:
-            state.currentSurahNumber
-        }
-      );
-    })
-    .catch(error => {
-      console.error(
-        "Full surah audio error:",
-        error
-      );
-
-      toast(
-        "آڈیو چل نہیں سکی"
-      );
-    });
+  audio.play().catch(() => {
+    state.isPlaying = false;
+  });
 }
 
 function togglePlay() {
@@ -1331,10 +1110,10 @@ function togglePlay() {
 
   if (!audio || !audio.src) return;
 
-  if (state.isPlaying) {
-    audio.pause();
-  } else {
+  if (audio.paused) {
     audio.play().catch(() => {});
+  } else {
+    audio.pause();
   }
 }
 
@@ -1370,63 +1149,56 @@ function closeAudio() {
     ?.classList.add("hidden");
 
   state.isPlaying = false;
-  state.playIndex = -1;
 }
 
-function fmtTime(seconds) {
-  const total =
-    Math.floor(seconds || 0);
+function fmtTime(s) {
+  s = Math.floor(s || 0);
 
   return (
-    Math.floor(total / 60) +
+    Math.floor(s / 60) +
     ":" +
-    String(total % 60).padStart(2, "0")
+    String(s % 60).padStart(2, "0")
   );
 }
 
-/* =========================
-   PRAYER TIMES
-========================= */
+/* ===================== PRAYER ===================== */
 
 function openPrayer() {
   showSection("prayer");
   setTitle("نماز کے اوقات");
-
-  analyticsEvent("prayer_opened");
 }
 
 function loadPrayerTimes() {
-  const container =
+  const list =
     document.getElementById(
       "prayerList"
     );
 
-  if (!container) return;
+  if (!list) return;
 
-  container.innerHTML =
-    `<div class="loading">مقام معلوم کیا جا رہا ہے...</div>`;
+  list.innerHTML =
+    '<div class="loading">مقام معلوم کیا جا رہا ہے...</div>';
 
   if (!navigator.geolocation) {
-    container.innerHTML =
-      "آپ کے فون میں لوکیشن دستیاب نہیں۔";
+    list.textContent =
+      "آپ کے فون میں Location دستیاب نہیں۔";
     return;
   }
 
   navigator.geolocation.getCurrentPosition(
-    async position => {
+    async pos => {
       try {
-        const latitude =
-          position.coords.latitude;
-
-        const longitude =
-          position.coords.longitude;
+        const {
+          latitude,
+          longitude
+        } = pos.coords;
 
         const data =
           await getJSON(
             `${ALADHAN_BASE}/timings?latitude=${latitude}&longitude=${longitude}&method=2`
           );
 
-        const timings =
+        const t =
           data.data.timings;
 
         const names = {
@@ -1447,92 +1219,39 @@ function loadPrayerTimes() {
           "Isha"
         ];
 
-        const now = new Date();
-
-        const nowMinutes =
-          now.getHours() * 60 +
-          now.getMinutes();
-
-        let nextPrayer = null;
-
-        for (const key of order) {
-          const parts =
-            timings[key]
-              .split(":")
-              .map(Number);
-
-          const minutes =
-            parts[0] * 60 +
-            parts[1];
-
-          if (minutes > nowMinutes) {
-            nextPrayer = key;
-            break;
-          }
-        }
-
-        container.innerHTML =
-          order.map(key => `
-            <div class="prayer ${
-              key === nextPrayer
-                ? "active"
-                : ""
-            }">
-
-              <span>
-                ${names[key]}
-              </span>
-
-              <span>
-                ${timings[key]}
-              </span>
-
-            </div>
-          `).join("") +
+        list.innerHTML =
+          order
+            .map(
+              k => `
+                <div class="prayer">
+                  <span>${names[k]}</span>
+                  <span>${t[k]}</span>
+                </div>
+              `
+            )
+            .join("") +
           `
             <p class="note">
-              تاریخ:
-              ${data.data.date.readable}
+              تاریخ: ${data.data.date.readable}
             </p>
           `;
-
-        analyticsEvent(
-          "prayer_times_loaded"
-        );
-
-      } catch (error) {
-        console.error(
-          "Prayer error:",
-          error
-        );
-
-        container.innerHTML =
-          "اوقات حاصل نہیں ہو سکے۔ دوبارہ کوشش کریں۔";
+      } catch (e) {
+        list.textContent =
+          "اوقات حاصل نہیں ہو سکے۔";
       }
     },
-
     () => {
-      container.innerHTML =
-        "لوکیشن کی اجازت نہیں ملی۔ براہ کرم Location Allow کریں۔";
-    },
-
-    {
-      enableHighAccuracy: true,
-      timeout: 15000,
-      maximumAge: 300000
+      list.textContent =
+        "Location کی اجازت نہیں ملی۔";
     }
   );
 }
 
-/* =========================
-   QIBLA
-========================= */
+/* ===================== QIBLA ===================== */
 
 function openQibla() {
   showSection("qibla");
   setTitle("قبلہ");
-
-  analyticsEvent("qibla_opened");
 }
 
 function findQibla() {
@@ -1552,20 +1271,19 @@ function findQibla() {
   }
 
   navigator.geolocation.getCurrentPosition(
-    async position => {
+    async pos => {
       try {
-        const latitude =
-          position.coords.latitude;
-
-        const longitude =
-          position.coords.longitude;
+        const {
+          latitude,
+          longitude
+        } = pos.coords;
 
         const data =
           await getJSON(
             `${ALADHAN_BASE}/qibla/${latitude}/${longitude}`
           );
 
-        const direction =
+        const deg =
           Number(data.data.direction);
 
         const compass =
@@ -1575,278 +1293,165 @@ function findQibla() {
 
         if (compass) {
           compass.style.transform =
-            `rotate(${direction}deg)`;
+            `rotate(${deg}deg)`;
         }
 
         if (text) {
           text.textContent =
-            `قبلہ کی سمت: شمال سے ${direction.toFixed(
+            `قبلہ کی سمت: شمال سے ${deg.toFixed(
               1
             )}°`;
         }
-
-        analyticsEvent(
-          "qibla_found"
-        );
-
-        enableOrientation(
-          direction
-        );
-
-      } catch (error) {
-        console.error(
-          "Qibla error:",
-          error
-        );
-
+      } catch (e) {
         if (text) {
           text.textContent =
-            "قبلہ کی سمت معلوم نہیں ہو سکی۔ دوبارہ کوشش کریں۔";
+            "سمت معلوم نہیں ہو سکی۔";
         }
       }
     },
-
     () => {
       if (text) {
         text.textContent =
           "لوکیشن کی اجازت نہیں ملی۔";
       }
-    },
-
-    {
-      enableHighAccuracy: true,
-      timeout: 15000,
-      maximumAge: 300000
     }
   );
 }
 
-function enableOrientation(qiblaDegree) {
-  if (
-    typeof DeviceOrientationEvent !==
-      "undefined" &&
-    typeof DeviceOrientationEvent.requestPermission ===
-      "function"
-  ) {
-    DeviceOrientationEvent
-      .requestPermission()
-      .then(result => {
-        if (result === "granted") {
-          window.addEventListener(
-            "deviceorientation",
-            event =>
-              handleOrientation(
-                event,
-                qiblaDegree
-              )
-          );
+/* ===================== INIT ===================== */
+
+document.addEventListener(
+  "DOMContentLoaded",
+  () => {
+    applyTheme();
+
+    const audio = audioEl();
+
+    if (audio) {
+      audio.addEventListener(
+        "ended",
+        () => {
+          if (state.playIndex >= 0) {
+            nextAyah();
+          }
         }
-      })
-      .catch(() => {});
-  } else {
-    window.addEventListener(
-      "deviceorientation",
-      event =>
-        handleOrientation(
-          event,
-          qiblaDegree
-        )
-    );
-  }
-}
+      );
 
-function handleOrientation(
-  event,
-  qiblaDegree
-) {
-  let heading = 0;
+      audio.addEventListener(
+        "play",
+        () => {
+          state.isPlaying = true;
 
-  if (
-    typeof event.webkitCompassHeading ===
-    "number"
-  ) {
-    heading =
-      event.webkitCompassHeading;
-  } else if (
-    typeof event.alpha ===
-    "number"
-  ) {
-    heading =
-      360 - event.alpha;
-  }
+          const btn =
+            document.getElementById(
+              "playPauseBtn"
+            );
 
-  const relative =
-    (
-      qiblaDegree -
-      heading +
-      360
-    ) % 360;
+          if (btn) {
+            btn.textContent = "⏸";
+          }
+        }
+      );
 
-  const compass =
-    document.getElementById(
-      "compass"
-    );
+      audio.addEventListener(
+        "pause",
+        () => {
+          state.isPlaying = false;
 
-  if (compass) {
-    compass.style.transform =
-      `rotate(${relative}deg)`;
-  }
-}
+          const btn =
+            document.getElementById(
+              "playPauseBtn"
+            );
 
-/* =========================
-   AUDIO EVENTS
-========================= */
+          if (btn) {
+            btn.textContent = "▶";
+          }
+        }
+      );
 
-function setupAudio() {
-  const audio = audioEl();
+      audio.addEventListener(
+        "timeupdate",
+        () => {
+          if (!audio.duration) return;
 
-  if (!audio) return;
+          const progress =
+            document.getElementById(
+              "audioProgress"
+            );
 
-  audio.addEventListener(
-    "ended",
-    () => {
-      if (state.playIndex >= 0) {
-        nextAyah();
-      }
-    }
-  );
+          const cur =
+            document.getElementById(
+              "audioCur"
+            );
 
-  audio.addEventListener(
-    "play",
-    () => {
-      state.isPlaying = true;
+          const dur =
+            document.getElementById(
+              "audioDur"
+            );
 
-      const button =
-        document.getElementById(
-          "playPauseBtn"
-        );
+          if (progress) {
+            progress.value =
+              (audio.currentTime /
+                audio.duration) *
+              100;
+          }
 
-      if (button) {
-        button.textContent = "⏸";
-      }
-    }
-  );
+          if (cur) {
+            cur.textContent =
+              fmtTime(
+                audio.currentTime
+              );
+          }
 
-  audio.addEventListener(
-    "pause",
-    () => {
-      state.isPlaying = false;
-
-      const button =
-        document.getElementById(
-          "playPauseBtn"
-        );
-
-      if (button) {
-        button.textContent = "▶";
-      }
-    }
-  );
-
-  audio.addEventListener(
-    "timeupdate",
-    () => {
-      if (!audio.duration) return;
+          if (dur) {
+            dur.textContent =
+              fmtTime(
+                audio.duration
+              );
+          }
+        }
+      );
 
       const progress =
         document.getElementById(
           "audioProgress"
         );
 
-      const current =
-        document.getElementById(
-          "audioCur"
-        );
-
-      const duration =
-        document.getElementById(
-          "audioDur"
-        );
-
       if (progress) {
-        progress.value =
-          (
-            audio.currentTime /
-            audio.duration
-          ) * 100;
-      }
-
-      if (current) {
-        current.textContent =
-          fmtTime(
-            audio.currentTime
-          );
-      }
-
-      if (duration) {
-        duration.textContent =
-          fmtTime(
-            audio.duration
-          );
+        progress.addEventListener(
+          "input",
+          e => {
+            if (audio.duration) {
+              audio.currentTime =
+                (Number(e.target.value) /
+                  100) *
+                audio.duration;
+            }
+          }
+        );
       }
     }
-  );
-
-  const progress =
-    document.getElementById(
-      "audioProgress"
-    );
-
-  if (progress) {
-    progress.addEventListener(
-      "input",
-      event => {
-        if (audio.duration) {
-          audio.currentTime =
-            (
-              Number(event.target.value) /
-              100
-            ) *
-            audio.duration;
-        }
-      }
-    );
-  }
-}
-
-/* =========================
-   APP START
-========================= */
-
-document.addEventListener(
-  "DOMContentLoaded",
-  () => {
-    applyTheme();
-    setupAudio();
 
     analyticsEvent(
       "app_loaded"
     );
-
-    console.log(
-      "Quran Companion loaded successfully."
-    );
   }
 );
 
-/* =========================
-   SERVICE WORKER
-========================= */
+/* ===================== SERVICE WORKER ===================== */
 
-if (
-  "serviceWorker" in navigator
-) {
+if ("serviceWorker" in navigator) {
   window.addEventListener(
     "load",
     () => {
       navigator.serviceWorker
         .register("./sw.js")
-        .catch(error => {
-          console.warn(
-            "Service Worker:",
-            error
-          );
-        });
+        .catch(e =>
+          console.log(
+            "SW error:",
+            e
+          )
+        );
     }
   );
 }
