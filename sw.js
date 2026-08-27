@@ -1,4 +1,4 @@
-const CACHE_NAME = "quran-companion-v3";
+const CACHE_NAME = "quran-companion-v4";
 const SHELL_FILES = ["./index.html", "./script.js", "./style.css", "./manifest.json", "./launchericon-512x512.png"];
 
 self.addEventListener("install", (e) => {
